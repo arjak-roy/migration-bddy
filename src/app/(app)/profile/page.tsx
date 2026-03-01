@@ -218,32 +218,37 @@ export default function ProfilePage() {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="bg-gradient-to-b from-primary/5">
               <div className="flex items-center gap-6">
-                <div
-                  className="group relative h-32 w-32"
-                  onClick={() => photoInputRef.current?.click()}
-                >
-                  <input
-                    type="file"
-                    ref={photoInputRef}
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                    accept="image/png, image/jpeg"
-                  />
-                  <div className="relative h-32 w-32 cursor-pointer overflow-hidden rounded-full bg-muted">
-                    <Image
-                      src={avatarDisplaySrc}
-                      alt="User avatar"
-                      data-ai-hint={avatarPlaceholder?.imageHint || "nurse portrait"}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                <div className="flex flex-col items-center gap-2">
                   <div
-                    className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
-                    title="Upload new photo"
+                    className="group relative h-32 w-32"
+                    onClick={() => photoInputRef.current?.click()}
                   >
-                    <Upload className="h-10 w-10 text-white" />
+                    <input
+                      type="file"
+                      ref={photoInputRef}
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                      accept="image/png, image/jpeg"
+                    />
+                    <div className="relative h-32 w-32 cursor-pointer overflow-hidden rounded-full bg-muted">
+                      <Image
+                        src={avatarDisplaySrc}
+                        alt="User avatar"
+                        data-ai-hint={avatarPlaceholder?.imageHint || "indian nurse"}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div
+                      className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
+                      title="Upload new photo"
+                    >
+                      <Upload className="h-10 w-10 text-white" />
+                    </div>
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    Please upload your latest color photo
+                  </p>
                 </div>
                 <div>
                   <CardTitle className="font-headline text-2xl text-primary">
