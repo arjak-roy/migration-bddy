@@ -1,7 +1,14 @@
-export function Logo() {
+import { cn } from '@/lib/utils';
+
+export function Logo({ className }: { className?: string }) {
   return (
-    <div className="flex h-6 w-6 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground">
-      <span className="font-bold text-muted-foreground">G</span>
+    <div
+      className={cn(
+        'flex items-center justify-center rounded-md border-2 border-dashed border-current p-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground',
+        className
+      )}
+    >
+      Logo
     </div>
   );
 }

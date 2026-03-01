@@ -37,7 +37,7 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col">
       <header className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <Logo />
+          <Logo className="h-9 w-20" />
           <span className="font-bold text-lg">GTS Migration Buddy</span>
         </Link>
         <nav className="flex items-center gap-4">
@@ -115,7 +115,7 @@ export default function LandingPage() {
       <footer className="border-t">
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-8 md:flex-row md:px-6">
           <div className="flex items-center gap-2">
-            <Logo />
+            <Logo className="h-8 w-16" />
             <span className="font-semibold">GTS Migration Buddy</span>
           </div>
           <p className="text-sm text-muted-foreground">

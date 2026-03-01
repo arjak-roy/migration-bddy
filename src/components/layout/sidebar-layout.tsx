@@ -57,9 +57,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="rounded-lg bg-primary p-1.5">
-                <Logo />
-              </div>
+              <Logo className="h-9 w-20 bg-primary text-primary-foreground" />
               <h2 className="text-xl font-semibold text-sidebar-foreground">
                 GTS Buddy
               </h2>
