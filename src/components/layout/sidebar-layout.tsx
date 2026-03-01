@@ -30,7 +30,7 @@ import { Logo } from '@/components/logo';
 import { useProgress } from '@/context/ProgressContext';
 
 const navItems = [
-  { id: 'dashboard', href: '/dashboard', label: 'GTS Dashboard', icon: Home },
+  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: Home },
   { id: 'profile', href: '/profile', label: 'Profile', icon: User },
   { id: 'guide', href: '/guide', label: 'Career Guide', icon: NotebookText },
   { id: 'assessment', href: '/assessment', label: 'Assessment', icon: BarChart3 },
@@ -43,6 +43,9 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
 
   const getPageTitle = () => {
     const currentPath = pathname.split('?')[0];
+    if (currentPath === '/dashboard') {
+      return 'GTS Dashboard';
+    }
     const activeItem = navItems.find((item) => currentPath === item.href);
     if (activeItem) {
       return activeItem.label;
@@ -57,11 +60,6 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo className="h-9 w-20 bg-primary text-primary-foreground" />
-            <Link href="/dashboard">
-              <h2 className="text-xl font-semibold text-sidebar-foreground">
-                GTS Buddy
-              </h2>
-            </Link>
           </div>
         </SidebarHeader>
         <SidebarContent>
