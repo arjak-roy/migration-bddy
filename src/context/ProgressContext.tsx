@@ -68,15 +68,20 @@ export const ProgressProvider = ({ children }: { children: ReactNode }) => {
   const isStepCompleted = (stepId: string) => completedSteps.includes(stepId);
 
   const isStepUnlocked = (stepId: string) => {
-    if (stepId === 'dashboard') return true;
+    // The dashboard and profile pages are always accessible as the starting points.
+    if (stepId === 'dashboard' || stepId === 'profile') {
+      return true;
+    }
 
+    // For any other step, we first find its position in the pathway.
     const stepIndex = initialPathwaySteps.findIndex(step => step.id === stepId);
-    if (stepIndex === -1) return false; // Not a valid step
 
-    if (stepIndex === 0) {
-      return true; // First step (profile) is always unlocked
+    // If it's not a valid step, or it's the first step (which is handled above), lock it.
+    if (stepIndex < 1) {
+        return false;
     }
     
+    // A step is unlocked if the step immediately before it in the pathway is completed.
     const previousStepId = initialPathwaySteps[stepIndex - 1].id;
     return isStepCompleted(previousStepId);
   };
