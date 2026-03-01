@@ -42,7 +42,11 @@ const profileSchema = z.object({
   qualifications: z.string().min(10, 'Please describe your qualifications.'),
   domainWorked: z.string().min(2, "Please enter the domain you've worked in."),
   currentExperience: z.string().min(2, "Please enter your current experience."),
-  previousExperiences: z.string().optional(),
+  experience1: z.string().optional(),
+  experience2: z.string().optional(),
+  experience3: z.string().optional(),
+  experience4: z.string().optional(),
+  experience5: z.string().optional(),
   skills: z.string().min(5, 'Please list some of your skills.'),
   careerGap: z.boolean().default(false),
   careerGapReason: z.string().optional(),
@@ -73,7 +77,11 @@ export default function ProfilePage() {
       dob: new Date('1990-05-20'),
       domainWorked: 'Healthcare / ICU',
       currentExperience: '5 years at Berlin Charité Hospital',
-      previousExperiences: '2 years as a staff nurse at City Hospital, 1 year at Community Clinic.',
+      experience1: '2 years as a staff nurse at City Hospital',
+      experience2: '1 year at Community Clinic',
+      experience3: '',
+      experience4: '',
+      experience5: '',
       skills: 'Patient care, ACLS, ICU management, German (B1), Tracheostomy care, Ventilator management',
       careerGap: false,
       careerGapReason: '',
@@ -256,24 +264,74 @@ export default function ProfilePage() {
                   )}
                 />
               </div>
+              
+              <div>
+                <FormLabel>Previous Experiences</FormLabel>
+                <FormDescription className="pt-2">List your previous roles and workplaces, one per field.</FormDescription>
+                <div className="mt-2 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="experience1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Previous Experience 1" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="experience2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Previous Experience 2" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="experience3"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Previous Experience 3" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="experience4"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Previous Experience 4" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="experience5"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Previous Experience 5" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="previousExperiences"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Previous Experiences</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        rows={3}
-                        placeholder="List your previous roles and workplaces."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="skills"
