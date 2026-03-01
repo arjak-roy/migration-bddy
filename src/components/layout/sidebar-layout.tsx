@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { useProgress } from '@/context/ProgressContext';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const navItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: Home },
@@ -55,6 +56,8 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
     if (currentPath.startsWith('/guide/')) return 'Career Guide';
     return 'My Migration Buddy';
   };
+  
+  const avatarPlaceholder = PlaceHolderImages.find((p) => p.id === 'avatar');
 
   return (
     <SidebarProvider>
@@ -95,8 +98,8 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
           >
             <Avatar>
               <AvatarImage
-                src="https://picsum.photos/seed/avatar/40/40"
-                data-ai-hint="nurse portrait"
+                src={avatarPlaceholder?.imageUrl || "https://picsum.photos/seed/avatar/40/40"}
+                data-ai-hint={avatarPlaceholder?.imageHint || "nurse portrait"}
               />
               <AvatarFallback>N</AvatarFallback>
             </Avatar>

@@ -26,9 +26,9 @@
     },
     {
       "id": "avatar",
-      "description": "Avatar for a nurse user",
-      "imageUrl": "https://images.unsplash.com/photo-1770922809090-6a4b9fb06fff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxudXJzZSUyMHBvcnRyYWl0fGVufDB8fHx8MTc3MjM3NTA1NXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "nurse portrait"
+      "description": "A smiling Indian nurse",
+      "imageUrl": "https://images.unsplash.com/photo-1620912189837-145c79069150?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwaW5kaWFuJTIwbnVyc2V8ZW58MHx8fHwxNzcyNDQ3NzM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian nurse"
     }
   ]
 }

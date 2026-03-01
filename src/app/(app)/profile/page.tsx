@@ -43,6 +43,7 @@ import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const profileSchema = z
   .object({
@@ -203,10 +204,12 @@ export default function ProfilePage() {
     router.push('/dashboard');
   }
 
+  const avatarPlaceholder = PlaceHolderImages.find((p) => p.id === 'avatar');
   const avatarDisplaySrc =
     isClient && photoSrc
       ? photoSrc
-      : 'https://picsum.photos/seed/avatar/128/128';
+      : avatarPlaceholder?.imageUrl ||
+        'https://picsum.photos/seed/avatar/128/128';
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -230,7 +233,7 @@ export default function ProfilePage() {
                     <Image
                       src={avatarDisplaySrc}
                       alt="User avatar"
-                      data-ai-hint="nurse portrait"
+                      data-ai-hint={avatarPlaceholder?.imageHint || "nurse portrait"}
                       fill
                       className="object-cover"
                     />
