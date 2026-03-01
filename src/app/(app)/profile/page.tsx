@@ -34,6 +34,7 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Calendar as CalendarIcon,
   CheckCircle2,
+  Download,
   Upload,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -44,6 +45,8 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const profileSchema = z
   .object({
@@ -98,6 +101,107 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const LOCAL_STORAGE_KEY = 'mmb-profile-photo';
 
+const ProfileDisplay = ({
+  data,
+  avatarSrc,
+}: {
+  data: ProfileFormValues;
+  avatarSrc: string;
+}) => {
+  return (
+    <div className="space-y-6 bg-background p-6 font-body">
+      <div className="flex flex-col items-center gap-4 text-center">
+        <div className="relative h-32 w-32">
+          <Image
+            src={avatarSrc}
+            alt="User avatar"
+            fill
+            className="rounded-full object-cover"
+          />
+        </div>
+        <div>
+          <h1 className="font-headline text-3xl font-bold">{data.name}</h1>
+          <p className="text-muted-foreground">{data.email}</p>
+          {data.contactNumber && (
+            <p className="text-muted-foreground">{data.contactNumber}</p>
+          )}
+          <p className="text-muted-foreground">
+            Born on {format(data.dob, 'PPP')}
+          </p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="space-y-4">
+        <h2 className="font-headline text-xl font-semibold">
+          Professional Summary
+        </h2>
+        <div>
+          <h3 className="font-semibold">Qualifications</h3>
+          <p className="text-sm text-muted-foreground">{data.qualifications}</p>
+        </div>
+        <div>
+          <h3 className="font-semibold">Skills</h3>
+          <p className="text-sm text-muted-foreground">{data.skills}</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="space-y-4">
+        <h2 className="font-headline text-xl font-semibold">Work Experience</h2>
+        <div>
+          <h3 className="font-semibold">Domain & Current Role</h3>
+          <p className="text-sm text-muted-foreground">
+            <strong>Domain:</strong> {data.domainWorked}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            <strong>Current:</strong> {data.currentExperience}
+          </p>
+        </div>
+
+        {(data.experience1 ||
+          data.experience2 ||
+          data.experience3 ||
+          data.experience4 ||
+          data.experience5) && (
+          <div>
+            <h3 className="font-semibold">Previous Experience</h3>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              {data.experience1 && <li>{data.experience1}</li>}
+              {data.experience2 && <li>{data.experience2}</li>}
+              {data.experience3 && <li>{data.experience3}</li>}
+              {data.experience4 && <li>{data.experience4}</li>}
+              {data.experience5 && <li>{data.experience5}</li>}
+            </ul>
+          </div>
+        )}
+
+        {data.careerGap && (
+          <div>
+            <h3 className="font-semibold">Career Gap</h3>
+            <p className="text-sm text-muted-foreground">
+              <strong>Duration:</strong> {data.careerGapYears} year(s)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              <strong>Reason:</strong> {data.careerGapReason}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <hr />
+
+      <div className="space-y-2 pt-4 text-center">
+        <p className="text-xs text-muted-foreground">
+          Generated from My Migration Buddy
+        </p>
+      </div>
+    </div>
+  );
+};
+
 export default function ProfilePage() {
   const { toast } = useToast();
   const { completeStep } = useProgress();
@@ -110,6 +214,9 @@ export default function ProfilePage() {
   const [agreementText, setAgreementText] = useState(
     'Loading agreement terms...'
   );
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState<ProfileFormValues | null>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -132,6 +239,55 @@ export default function ProfilePage() {
         );
       });
   }, []);
+
+  const handleDownloadPdf = async () => {
+    const element = profileRef.current;
+    if (!element) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not find profile content to download.',
+      });
+      return;
+    }
+
+    toast({ title: 'Generating PDF...', description: 'This may take a moment.' });
+
+    const canvas = await html2canvas(element, {
+      scale: 2, // Higher scale for better quality
+      useCORS: true,
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasHeight / canvasWidth;
+
+    let width = pdfWidth - 20; // 10mm margin on each side
+    let height = width * ratio;
+    
+    // If height is more than page, scale it down.
+    if (height > pdfHeight - 20) {
+      height = pdfHeight - 20;
+      width = height / ratio;
+    }
+
+
+    const x = (pdfWidth - width) / 2; // Center horizontally
+    const y = 10; // 10mm margin
+
+    pdf.addImage(imgData, 'PNG', x, y, width, height);
+    pdf.save('My-Migration-Buddy-Profile.pdf');
+  };
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -187,7 +343,8 @@ export default function ProfilePage() {
       description: 'Your information has been successfully saved.',
     });
     completeStep('profile');
-    router.push('/dashboard');
+    setFormData(data);
+    setIsSubmitted(true);
   }
 
   const avatarPlaceholder = PlaceHolderImages.find((p) => p.id === 'avatar');
@@ -196,6 +353,50 @@ export default function ProfilePage() {
       ? photoSrc
       : avatarPlaceholder?.imageUrl ||
         'https://picsum.photos/seed/avatar/128/128';
+
+  if (isSubmitted && formData) {
+    return (
+      <div className="mx-auto max-w-4xl">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-headline text-2xl">
+              Profile Saved Successfully
+            </CardTitle>
+            <CardDescription>
+              Your profile is complete. You can download a copy for your
+              records or return to the dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Hidden div for PDF generation */}
+            <div className="fixed -left-[9999px] -top-[9999px]">
+              <div ref={profileRef} style={{ width: '800px' }}>
+                <ProfileDisplay data={formData} avatarSrc={avatarDisplaySrc} />
+              </div>
+            </div>
+            {/* Visible preview */}
+            <div className="rounded-lg border bg-muted p-2">
+              <ScrollArea className="h-[500px]">
+                <ProfileDisplay data={formData} avatarSrc={avatarDisplaySrc} />
+              </ScrollArea>
+            </div>
+          </CardContent>
+          <CardFooter className="justify-start gap-4 border-t pt-6">
+            <Button onClick={handleDownloadPdf}>
+              <Download className="mr-2 h-4 w-4" />
+              Download PDF
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/dashboard')}
+            >
+              Back to Dashboard
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -220,7 +421,9 @@ export default function ProfilePage() {
                       <Image
                         src={avatarDisplaySrc}
                         alt="User avatar"
-                        data-ai-hint={avatarPlaceholder?.imageHint || "indian nurse"}
+                        data-ai-hint={
+                          avatarPlaceholder?.imageHint || 'indian nurse'
+                        }
                         fill
                         className="object-cover"
                       />
@@ -569,8 +772,8 @@ export default function ProfilePage() {
               <div className="space-y-6 rounded-lg border bg-primary/5 p-4">
                 <h3 className="text-lg font-medium">Document Uploads</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upload your CV, certificates, and other relevant documents. All uploads
-                  are optional. Accepted formats: PDF, DOC, DOCX.
+                  Upload your CV, certificates, and other relevant documents.
+                  All uploads are optional. Accepted formats: PDF, DOC, DOCX.
                 </p>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <FormField
@@ -599,7 +802,9 @@ export default function ProfilePage() {
                     name="languageCertificate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Language Certificate (A2, B1, etc.)</FormLabel>
+                        <FormLabel>
+                          Language Certificate (A2, B1, etc.)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="file"
@@ -641,7 +846,9 @@ export default function ProfilePage() {
                     name="experienceCertificate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Experience Certificate or Current offer letter</FormLabel>
+                        <FormLabel>
+                          Experience Certificate or Current offer letter
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="file"
