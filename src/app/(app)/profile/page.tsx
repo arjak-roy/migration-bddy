@@ -91,7 +91,7 @@ const profileSchema = z
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const LOCAL_STORAGE_KEY = 'gts-profile-photo';
+const LOCAL_STORAGE_KEY = 'mmb-profile-photo';
 
 export default function ProfilePage() {
   const { toast } = useToast();

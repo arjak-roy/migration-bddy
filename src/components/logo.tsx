@@ -5,7 +5,7 @@ import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload } from 'lucide-react';
 
-const LOCAL_STORAGE_KEY = 'gts-uploaded-logo';
+const LOCAL_STORAGE_KEY = 'mmb-uploaded-logo';
 
 export function Logo({ className }: { className?: string }) {
   const [logoSrc, setLogoSrc] = useState<string | null>(null);

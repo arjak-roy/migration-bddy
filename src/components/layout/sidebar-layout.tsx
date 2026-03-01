@@ -44,14 +44,14 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const getPageTitle = () => {
     const currentPath = pathname.split('?')[0];
     if (currentPath === '/dashboard') {
-      return 'GTS Dashboard';
+      return 'Dashboard';
     }
     const activeItem = navItems.find((item) => currentPath === item.href);
     if (activeItem) {
       return activeItem.label;
     }
     if (currentPath.startsWith('/guide/')) return 'Career Guide';
-    return 'GTS Migration Buddy';
+    return 'My Migration Buddy';
   };
 
   return (

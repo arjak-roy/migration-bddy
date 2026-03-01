@@ -37,7 +37,7 @@ export const ProgressProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // This effect runs only on the client, after the component has mounted.
     try {
-      const savedProgress = localStorage.getItem('gts-progress');
+      const savedProgress = localStorage.getItem('mmb-progress');
       if (savedProgress) {
         setCompletedSteps(JSON.parse(savedProgress));
       }
@@ -51,7 +51,7 @@ export const ProgressProvider = ({ children }: { children: ReactNode }) => {
     // This effect runs only on the client and when completedSteps changes.
     if (isInitialized) {
       try {
-        localStorage.setItem('gts-progress', JSON.stringify(completedSteps));
+        localStorage.setItem('mmb-progress', JSON.stringify(completedSteps));
       } catch (error) {
         console.error("Failed to save progress to localStorage", error);
       }

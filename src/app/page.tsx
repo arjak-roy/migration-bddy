@@ -39,7 +39,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-2">
           <Logo className="h-9 w-20" />
           <Link href="/">
-            <span className="font-bold text-lg">GTS Migration Buddy</span>
+            <span className="font-bold text-lg">My Migration Buddy</span>
           </Link>
         </div>
         <nav className="flex items-center gap-4">
@@ -59,7 +59,7 @@ export default function LandingPage() {
               Your Pathway to a Nursing Career in Germany
             </h1>
             <p className="max-w-[600px] text-lg text-muted-foreground">
-              GTS Migration Buddy is your all-in-one platform for making your dream of working as a nurse in Germany a reality. From language assessment to job placement, we guide you every step of the way.
+              My Migration Buddy is your all-in-one platform for making your dream of working as a nurse in Germany a reality. From language assessment to job placement, we guide you every step of the way.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
               <Button size="lg" asChild>
@@ -118,10 +118,10 @@ export default function LandingPage() {
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-8 md:flex-row md:px-6">
           <div className="flex items-center gap-2">
             <Logo className="h-8 w-16" />
-            <span className="font-semibold">GTS Migration Buddy</span>
+            <span className="font-semibold">My Migration Buddy</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} GTS Migration Buddy. All rights reserved.
+            © {new Date().getFullYear()} My Migration Buddy. All rights reserved.
           </p>
           <nav className="flex gap-4">
             <Link href="#" className="text-sm hover:underline">Privacy Policy</Link>

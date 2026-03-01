@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'GTS Migration Buddy',
+  title: 'My Migration Buddy',
   description: 'Your Pathway to a Nursing Career in Germany',
 };
 
