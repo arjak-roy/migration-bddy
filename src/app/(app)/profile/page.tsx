@@ -49,18 +49,26 @@ const profileSchema = z.object({
   experience5: z.string().optional(),
   skills: z.string().min(5, 'Please list some of your skills.'),
   careerGap: z.boolean().default(false),
+  careerGapYears: z.coerce.number().optional(),
   careerGapReason: z.string().optional(),
-}).refine((data) => {
-    if (data.careerGap && !data.careerGapReason) {
-      return false;
+}).superRefine((data, ctx) => {
+  if (data.careerGap) {
+    if (!data.careerGapYears || data.careerGapYears <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please provide the number of years for the career gap.',
+        path: ['careerGapYears'],
+      });
     }
-    return true;
-  },
-  {
-    message: "Please provide a reason for the career gap.",
-    path: ["careerGapReason"],
+    if (!data.careerGapReason || data.careerGapReason.trim().length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please provide a reason for the career gap.',
+        path: ['careerGapReason'],
+      });
+    }
   }
-);
+});
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
@@ -84,6 +92,7 @@ export default function ProfilePage() {
       experience5: '',
       skills: 'Patient care, ACLS, ICU management, German (B1), Tracheostomy care, Ventilator management',
       careerGap: false,
+      careerGapYears: undefined,
       careerGapReason: '',
     },
   });
@@ -363,7 +372,7 @@ export default function ProfilePage() {
                         Did you have a career gap?
                       </FormLabel>
                       <FormDescription>
-                        Let us know if you have had any gaps in your career.
+                        Select if you have had any gaps in your career of 6 months or more.
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -377,22 +386,38 @@ export default function ProfilePage() {
               />
               
               {watchCareerGap && (
-                <FormField
-                  control={form.control}
-                  name="careerGapReason"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Reason for Career Gap</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Briefly explain the reason for your career gap."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4 rounded-lg border p-4">
+                  <FormField
+                    control={form.control}
+                    name="careerGapYears"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Number of years</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="e.g., 2" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="careerGapReason"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reason for Career Gap</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Briefly explain the reason for your career gap."
+                            {...field}
+                             value={field.value ?? ''}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               )}
 
             </CardContent>
