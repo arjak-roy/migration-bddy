@@ -39,8 +39,9 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Check, ExternalLink, Loader2 } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
+import { ExternalLink, Loader2 } from 'lucide-react';
+import { useProgress } from '@/context/ProgressContext';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   priorLanguageLearningExperience: z
@@ -66,6 +67,8 @@ export default function AssessmentPage() {
   const [recommendations, setRecommendations] =
     useState<PersonalizeLanguageRecommendationsOutput | null>(null);
   const { toast } = useToast();
+  const { isStepUnlocked, completeStep } = useProgress();
+  const router = useRouter();
 
   const form = useForm<AssessmentFormValues>({
     resolver: zodResolver(formSchema),
@@ -76,6 +79,31 @@ export default function AssessmentPage() {
     },
   });
 
+  if (!isStepUnlocked('assessment')) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="font-headline text-2xl">
+              Section Locked
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Please complete the previous steps in your pathway to unlock this
+              assessment.
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Button onClick={() => router.push('/dashboard')}>
+              Back to Dashboard
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
   async function onSubmit(values: AssessmentFormValues) {
     setIsLoading(true);
     setAssessmentResult(null);
@@ -84,6 +112,7 @@ export default function AssessmentPage() {
     try {
       const assessmentOutput = await germanReadinessAssessment(values);
       setAssessmentResult(assessmentOutput);
+      completeStep('assessment');
 
       if (assessmentOutput) {
         const recommendationsOutput = await personalizeLanguageRecommendations({
@@ -198,7 +227,9 @@ export default function AssessmentPage() {
                           <SelectItem value="A1">A1 (Beginner)</SelectItem>
                           <SelectItem value="A2">A2 (Elementary)</SelectItem>
                           <SelectItem value="B1">B1 (Intermediate)</SelectItem>
-                          <SelectItem value="B2">B2 (Upper-Intermediate)</SelectItem>
+                          <SelectItem value="B2">
+                            B2 (Upper-Intermediate)
+                          </SelectItem>
                           <SelectItem value="C1">C1 (Advanced)</SelectItem>
                           <SelectItem value="C2">C2 (Proficient)</SelectItem>
                         </SelectContent>
@@ -256,17 +287,19 @@ export default function AssessmentPage() {
                       className="stroke-current text-primary"
                       strokeWidth="2"
                       strokeDasharray="100"
-                      strokeDashoffset={100 - (assessmentResult.aptitudeScore || 0)}
+                      strokeDashoffset={
+                        100 - (assessmentResult.aptitudeScore || 0)
+                      }
                     ></circle>
                   </g>
                 </svg>
                 <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2">
-                   <span className="text-center text-3xl font-bold text-primary">
+                  <span className="text-center text-3xl font-bold text-primary">
                     {assessmentResult.aptitudeScore}
                   </span>
                 </div>
               </div>
-              <p className="font-semibold text-lg">Aptitude Score</p>
+              <p className="text-lg font-semibold">Aptitude Score</p>
             </CardContent>
           </Card>
 
@@ -285,7 +318,7 @@ export default function AssessmentPage() {
               </div>
               <div>
                 <h4 className="font-semibold">Areas for Improvement</h4>
-                 <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
                   {assessmentResult.weaknesses.map((item, i) => (
                     <li key={i}>{item}</li>
                   ))}
@@ -295,9 +328,13 @@ export default function AssessmentPage() {
           </Card>
 
           <div>
-             <h2 className="mb-4 font-headline text-2xl font-bold">Personalized Learning Resources</h2>
-             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {isLoading && !recommendations && <p>Generating recommendations...</p>}
+            <h2 className="mb-4 font-headline text-2xl font-bold">
+              Personalized Learning Resources
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {isLoading && !recommendations && (
+                <p>Generating recommendations...</p>
+              )}
               {recommendations?.recommendations.map((rec, i) => (
                 <Card key={i} className="flex flex-col">
                   <CardHeader>
@@ -305,27 +342,41 @@ export default function AssessmentPage() {
                     <CardDescription>{rec.category}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow">
-                    <p className="text-sm text-muted-foreground">{rec.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {rec.description}
+                    </p>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      {rec.focusAreas.map(area => (
-                        <div key={area} className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">{area}</div>
+                      {rec.focusAreas.map((area) => (
+                        <div
+                          key={area}
+                          className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
+                        >
+                          {area}
+                        </div>
                       ))}
                     </div>
                   </CardContent>
                   <CardFooter>
-                     <Button asChild variant="outline" className="w-full">
-                        <a href={rec.url} target="_blank" rel="noopener noreferrer">
-                          Visit Resource <ExternalLink className="ml-2 h-4 w-4" />
-                        </a>
+                    <Button asChild variant="outline" className="w-full">
+                      <a
+                        href={rec.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Visit Resource{' '}
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                      </a>
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
-             </div>
+            </div>
           </div>
-          
+
           <div className="text-center">
-            <Button onClick={() => setAssessmentResult(null)}>Take Assessment Again</Button>
+            <Button onClick={() => router.push('/dashboard')}>
+              Back to Dashboard
+            </Button>
           </div>
         </div>
       )}

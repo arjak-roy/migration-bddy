@@ -1,9 +1,15 @@
+'use client';
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useProgress } from '@/context/ProgressContext';
+import { useRouter } from 'next/navigation';
 
 const guideContent = [
   {
@@ -45,10 +51,42 @@ const guideContent = [
 ];
 
 export default function GuidePage() {
+  const { completeStep, isStepUnlocked } = useProgress();
+  const router = useRouter();
+
+  if (!isStepUnlocked('guide')) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="font-headline text-2xl">Section Locked</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Please complete your profile first to unlock this section.
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Button onClick={() => router.push('/profile')}>
+              Go to Profile
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleCompletion = () => {
+    completeStep('guide');
+    router.push('/dashboard');
+  };
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8 text-center">
-        <h1 className="font-headline text-3xl font-bold">Germany Nurse Career Guide</h1>
+        <h1 className="font-headline text-3xl font-bold">
+          Germany Nurse Career Guide
+        </h1>
         <p className="mt-2 text-muted-foreground">
           Your comprehensive guide to starting a nursing career in Germany.
         </p>
@@ -56,7 +94,7 @@ export default function GuidePage() {
       <Accordion type="single" collapsible className="w-full">
         {guideContent.map((item) => (
           <AccordionItem key={item.value} value={item.value}>
-            <AccordionTrigger className="text-lg font-semibold">
+            <AccordionTrigger className="text-left text-lg font-semibold">
               {item.title}
             </AccordionTrigger>
             <AccordionContent className="text-base text-muted-foreground">
@@ -65,6 +103,9 @@ export default function GuidePage() {
           </AccordionItem>
         ))}
       </Accordion>
+      <div className="mt-8 text-center">
+        <Button onClick={handleCompletion}>Mark as Read and Continue</Button>
+      </div>
     </div>
   );
 }
