@@ -133,9 +133,9 @@ export default function ProfilePage() {
                   <AvatarFallback>NA</AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="font-headline text-2xl">Your Profile</CardTitle>
+                  <CardTitle className="font-headline text-2xl">Create your Profile</CardTitle>
                   <CardDescription>
-                    Manage your personal and professional information.
+                    Fill out your profile to get started.
                   </CardDescription>
                 </div>
               </div>
