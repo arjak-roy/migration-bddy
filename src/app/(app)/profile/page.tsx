@@ -179,20 +179,6 @@ export default function ProfilePage() {
   });
 
   const watchCareerGap = form.watch('careerGap');
-  const watchDob = form.watch('dob');
-
-  const calculateAge = (birthDate: Date | undefined) => {
-    if (!birthDate) return null;
-    const today = new Date();
-    let age = today.getFullYear() - new Date(birthDate).getFullYear();
-    const m = today.getMonth() - new Date(birthDate).getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < new Date(birthDate).getDate())) {
-      age--;
-    }
-    return age;
-  };
-
-  const age = calculateAge(watchDob);
 
   function onSubmit(data: ProfileFormValues) {
     console.log(data);
@@ -261,7 +247,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-8 pt-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -332,8 +318,7 @@ export default function ProfilePage() {
                         </PopoverContent>
                       </Popover>
                       <FormDescription>
-                        Your date of birth is used to calculate your age.{' '}
-                        {age != null && `You are ${age} years old.`}
+                        Your date of birth is used to calculate your age.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
