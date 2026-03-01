@@ -31,12 +31,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Upload } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 
 const profileSchema = z
   .object({
@@ -47,7 +48,9 @@ const profileSchema = z
     }),
     contactNumber: z.string().optional(),
     qualifications: z.string().min(10, 'Please describe your qualifications.'),
-    domainWorked: z.string().min(2, "Please enter the domain you've worked in."),
+    domainWorked: z
+      .string()
+      .min(2, "Please enter the domain you've worked in."),
     currentExperience: z
       .string()
       .min(2, 'Please enter your current experience.'),
@@ -60,6 +63,7 @@ const profileSchema = z
     careerGap: z.boolean().default(false),
     careerGapYears: z.coerce.number().optional(),
     careerGapReason: z.string().optional(),
+    resume: z.any().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.careerGap) {
@@ -82,10 +86,40 @@ const profileSchema = z
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
+const LOCAL_STORAGE_KEY = 'gts-profile-photo';
+
 export default function ProfilePage() {
   const { toast } = useToast();
   const { completeStep } = useProgress();
   const router = useRouter();
+
+  const [photoSrc, setPhotoSrc] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+    const savedPhoto = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedPhoto) {
+      setPhotoSrc(savedPhoto);
+    }
+  }, []);
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPhotoSrc(result);
+        localStorage.setItem(LOCAL_STORAGE_KEY, result);
+      };
+      reader.readAsDataURL(file);
+    }
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -108,6 +142,7 @@ export default function ProfilePage() {
       careerGap: false,
       careerGapYears: undefined,
       careerGapReason: '',
+      resume: undefined,
     },
   });
 
@@ -136,6 +171,8 @@ export default function ProfilePage() {
     completeStep('profile');
     router.push('/dashboard');
   }
+  
+  const avatarDisplaySrc = isClient && photoSrc ? photoSrc : 'https://picsum.photos/seed/avatar/128/128';
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -143,25 +180,69 @@ export default function ProfilePage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    src="https://picsum.photos/seed/avatar/128/128"
-                    data-ai-hint="nurse portrait"
+              <div className="flex items-center gap-6">
+                <div className="group relative h-24 w-24">
+                  <input
+                    type="file"
+                    ref={photoInputRef}
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/gif"
                   />
-                  <AvatarFallback>NA</AvatarFallback>
-                </Avatar>
+                  <Avatar
+                    className="h-24 w-24 cursor-pointer"
+                    onClick={() => photoInputRef.current?.click()}
+                  >
+                    <AvatarImage
+                      src={avatarDisplaySrc}
+                      alt="User avatar"
+                      data-ai-hint="nurse portrait"
+                    />
+                    <AvatarFallback>NA</AvatarFallback>
+                  </Avatar>
+                  <div
+                    className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
+                    onClick={() => photoInputRef.current?.click()}
+                    title="Upload new photo"
+                  >
+                    <Upload className="h-8 w-8 text-white" />
+                  </div>
+                </div>
                 <div>
                   <CardTitle className="font-headline text-2xl">
                     Create your Profile
                   </CardTitle>
                   <CardDescription>
-                    Fill out your profile to get started.
+                    Fill out your profile to get started. This information will
+                    help us tailor your experience.
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-8">
+              <FormField
+                control={form.control}
+                name="resume"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Upload Resume/CV</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(e) =>
+                          field.onChange(e.target.files ? e.target.files[0] : null)
+                        }
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload your resume in PDF, DOC, or DOCX format.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
