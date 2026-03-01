@@ -471,7 +471,7 @@ export default function AssessmentPage() {
           <div className="flex items-center gap-4">
             <Logo className="h-16 w-16 shrink-0" />
             <div>
-              <CardTitle className="font-headline text-3xl">Career Readiness Assessment</CardTitle>
+              <CardTitle className="font-headline text-3xl">German Readiness Assessment</CardTitle>
               <CardDescription className="text-base">
                 This mandatory test helps us understand your current skills and mindset. Please answer all questions honestly.
                 You must score at least {PASS_PERCENTAGE}% to pass.
