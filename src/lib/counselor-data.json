@@ -1,8 +1,7 @@
 {
   "counselorNumber": "8017596946",
   "languageClasses": [
-    { "day": "Mondays & Wednesdays", "time": "18:00 - 19:30", "level": "A1/A2" },
-    { "day": "Tuesdays & Thursdays", "time": "09:00 - 10:30", "level": "B1" },
-    { "day": "Saturdays", "time": "10:00 - 13:00", "level": "B2 Exam Prep" }
+    { "day": "Online Class", "time": "7:00 PM (Starts 15th March)", "level": "Beginner" },
+    { "day": "Offline Class", "time": "10:00 AM - 5:00 PM (Starts 15th March)", "level": "Beginner" }
   ]
 }
