@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A nurse looking towards a German cityscape",
+      "imageUrl": "https://images.unsplash.com/photo-1533574612789-7af335ee5f14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxudXJzZSUyMGdlcm1hbnl8ZW58MHx8fHwxNzcyMzc1MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "nurse germany"
+    },
+    {
+      "id": "guide",
+      "description": "A person reading a guide book in front of the Brandenburg Gate",
+      "imageUrl": "https://images.unsplash.com/photo-1533224188-15046082249f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Z2VybWFueSUyMHRyYXZlbHxlbnwwfHx8fDE3NzIzNzUwNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "germany travel"
+    },
+    {
+      "id": "assessment",
+      "description": "A desk with a laptop showing a test and a cup of coffee",
+      "imageUrl": "https://images.unsplash.com/photo-1598981457915-aea220950616?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkZXNrJTIwdGVzdHxlbnwwfHx8fDE3NzIzNzUwNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "desk test"
+    },
+    {
+      "id": "jobs",
+      "description": "A modern hospital building exterior",
+      "imageUrl": "https://images.unsplash.com/photo-1587351021355-a479a299d2f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxob3NwaXRhbCUyMGJ1aWxkaW5nfGVufDB8fHx8MTc3MjM3NTA1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hospital building"
+    },
+    {
+      "id": "avatar",
+      "description": "Avatar for a nurse user",
+      "imageUrl": "https://images.unsplash.com/photo-1770922809090-6a4b9fb06fff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxudXJzZSUyMHBvcnRyYWl0fGVufDB8fHx8MTc3MjM3NTA1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "nurse portrait"
+    }
+  ]
 }
