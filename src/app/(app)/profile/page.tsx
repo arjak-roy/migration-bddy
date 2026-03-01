@@ -24,7 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
 import {
   Popover,
   PopoverContent,
@@ -181,28 +181,25 @@ export default function ProfilePage() {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
               <div className="flex items-center gap-6">
-                <div className="group relative h-24 w-24">
+                <div className="group relative h-24 w-24" onClick={() => photoInputRef.current?.click()}>
                   <input
                     type="file"
                     ref={photoInputRef}
                     onChange={handlePhotoChange}
                     className="hidden"
-                    accept="image/png, image/jpeg, image/gif"
+                    accept="image/png, image/jpeg"
                   />
-                  <Avatar
-                    className="h-24 w-24 cursor-pointer"
-                    onClick={() => photoInputRef.current?.click()}
-                  >
-                    <AvatarImage
+                  <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded-full bg-muted">
+                    <Image
                       src={avatarDisplaySrc}
                       alt="User avatar"
                       data-ai-hint="nurse portrait"
+                      fill
+                      className="object-cover"
                     />
-                    <AvatarFallback>NA</AvatarFallback>
-                  </Avatar>
+                  </div>
                   <div
                     className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={() => photoInputRef.current?.click()}
                     title="Upload new photo"
                   >
                     <Upload className="h-8 w-8 text-white" />
