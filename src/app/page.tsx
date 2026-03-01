@@ -36,10 +36,12 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Logo className="h-9 w-20" />
-          <span className="font-bold text-lg">GTS Migration Buddy</span>
-        </Link>
+          <Link href="/">
+            <span className="font-bold text-lg">GTS Migration Buddy</span>
+          </Link>
+        </div>
         <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild>
             <Link href="/dashboard">Login</Link>
