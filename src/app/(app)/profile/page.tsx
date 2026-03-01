@@ -31,13 +31,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Upload } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  CheckCircle2,
+  Upload,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const profileSchema = z
   .object({
@@ -96,6 +101,7 @@ export default function ProfilePage() {
   const [photoSrc, setPhotoSrc] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -171,8 +177,11 @@ export default function ProfilePage() {
     completeStep('profile');
     router.push('/dashboard');
   }
-  
-  const avatarDisplaySrc = isClient && photoSrc ? photoSrc : 'https://picsum.photos/seed/avatar/128/128';
+
+  const avatarDisplaySrc =
+    isClient && photoSrc
+      ? photoSrc
+      : 'https://picsum.photos/seed/avatar/128/128';
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -181,7 +190,10 @@ export default function ProfilePage() {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
               <div className="flex items-center gap-6">
-                <div className="group relative h-24 w-24" onClick={() => photoInputRef.current?.click()}>
+                <div
+                  className="group relative h-24 w-24"
+                  onClick={() => photoInputRef.current?.click()}
+                >
                   <input
                     type="file"
                     ref={photoInputRef}
@@ -228,7 +240,9 @@ export default function ProfilePage() {
                         type="file"
                         accept=".pdf,.doc,.docx"
                         onChange={(e) =>
-                          field.onChange(e.target.files ? e.target.files[0] : null)
+                          field.onChange(
+                            e.target.files ? e.target.files[0] : null
+                          )
                         }
                       />
                     </FormControl>
@@ -558,9 +572,91 @@ export default function ProfilePage() {
                   />
                 </div>
               )}
+
+              <div className="space-y-4 rounded-lg border p-4">
+                <h3 className="text-lg font-medium">User Agreement</h3>
+                <FormDescription>
+                  Please read and accept the terms and conditions to continue.
+                </FormDescription>
+                <ScrollArea className="h-40 w-full rounded-md border p-4 text-sm text-muted-foreground">
+                  <strong>1. Introduction</strong>
+                  <br />
+                  Welcome to GTS Migration Buddy. By using our services, you
+                  agree to be bound by these terms and conditions. Please read
+                  them carefully.
+                  <br />
+                  <br />
+                  <strong>2. Services</strong>
+                  <br />
+                  Our platform provides guidance, assessment tools, and
+                  resources for nurses seeking to work in Germany. We do not
+                  guarantee job placement or visa approval, as these are
+                  subject to external authorities and employers.
+                  <br />
+                  <br />
+                  <strong>3. User Data</strong>
+                  <br />
+                  You agree to provide accurate and complete information in
+                  your profile. We are committed to protecting your privacy in
+                  accordance with our Privacy Policy. Your data will be used
+                  to personalize your experience and connect you with potential
+                  opportunities.
+                  <br />
+                  <br />
+                  <strong>4. User Responsibilities</strong>
+                  <br />
+                  You are responsible for maintaining the confidentiality of
+                  your account and for all activities that occur under your
+                  account. You agree to use the service for lawful purposes
+                  only.
+                  <br />
+                  <br />
+                  <strong>5. Acceptance</strong>
+                  <br />
+                  By clicking 'I Agree', you acknowledge that you have read,
+                  understood, and agree to be bound by these Terms and
+                  Conditions.
+                </ScrollArea>
+                <div className="flex items-center space-x-4">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setAgreementAccepted(true);
+                      toast({
+                        title: 'Agreement Accepted',
+                        description: 'You can now submit your profile.',
+                      });
+                    }}
+                  >
+                    I Agree
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setAgreementAccepted(false);
+                      toast({
+                        variant: 'destructive',
+                        title: 'Agreement Required',
+                        description: 'You must agree to the terms to proceed.',
+                      });
+                    }}
+                  >
+                    I Disagree
+                  </Button>
+                  {agreementAccepted && (
+                    <div className="flex items-center text-sm font-medium text-green-600">
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      You have accepted the agreement.
+                    </div>
+                  )}
+                </div>
+              </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit">Update Profile and Continue</Button>
+              <Button type="submit" disabled={!agreementAccepted}>
+                Update Profile and Continue
+              </Button>
             </CardFooter>
           </form>
         </Form>
