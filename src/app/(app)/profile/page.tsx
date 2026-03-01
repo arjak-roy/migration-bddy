@@ -69,6 +69,10 @@ const profileSchema = z
     careerGapYears: z.coerce.number().optional(),
     careerGapReason: z.string().optional(),
     resume: z.any().optional(),
+    languageCertificate: z.any().optional(),
+    graduationCertificate: z.any().optional(),
+    experienceCertificate: z.any().optional(),
+    employerOfferLetter: z.any().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.careerGap) {
@@ -166,6 +170,10 @@ export default function ProfilePage() {
       careerGapYears: undefined,
       careerGapReason: '',
       resume: undefined,
+      languageCertificate: undefined,
+      graduationCertificate: undefined,
+      experienceCertificate: undefined,
+      employerOfferLetter: undefined,
     },
   });
 
@@ -246,30 +254,121 @@ export default function ProfilePage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-8">
-              <FormField
-                control={form.control}
-                name="resume"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Upload Resume/CV</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.files ? e.target.files[0] : null
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload your resume in PDF, DOC, or DOCX format.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-6 rounded-lg border p-4">
+                <h3 className="text-lg font-medium">Document Uploads</h3>
+                <p className="text-sm text-muted-foreground">
+                  Upload your CV, certificates, and other relevant documents. All uploads
+                  are optional. Accepted formats: PDF, DOC, DOCX.
+                </p>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="resume"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Resume/CV</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.files ? e.target.files[0] : null
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="languageCertificate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Language Certificate (A2, B1, etc.)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.files ? e.target.files[0] : null
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="graduationCertificate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Graduation Certificate</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.files ? e.target.files[0] : null
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="experienceCertificate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Experience Certificate or Current offer letter</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.files ? e.target.files[0] : null
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="employerOfferLetter"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Employer Offer Letter</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.files ? e.target.files[0] : null
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
