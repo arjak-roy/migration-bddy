@@ -16,10 +16,10 @@ import {
 } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, Phone, XCircle } from 'lucide-react';
+import { Award, BookOpen, Phone, XCircle } from 'lucide-react';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
-import { Separator } from '@/components/ui/separator';
+import { Logo } from '@/components/logo';
 
 const questions = [
   // English Questions (5 questions, 2 marks each)
@@ -287,15 +287,20 @@ export default function AssessmentPage() {
 
     return (
       <div className="mx-auto max-w-3xl space-y-8">
-        <Card>
+        <Card className="border-2 border-primary">
           <CardHeader className="items-center text-center">
-            <CardTitle className="font-headline text-3xl">
+            {passed ? (
+              <Award className="h-16 w-16 text-primary" />
+            ) : (
+              <XCircle className="mx-auto h-16 w-16 text-destructive" />
+            )}
+            <CardTitle className="pt-2 font-headline text-3xl">
               {passed ? 'Congratulations! Assessment Passed!' : 'Assessment Complete'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base">
               {passed
-                ? "You've successfully passed the assessment."
-                : 'You did not meet the passing score this time.'}
+                ? "You've successfully passed the assessment and are ready for the next step."
+                : 'You did not meet the passing score this time. Please review your answers and try again.'}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-6">
@@ -303,11 +308,11 @@ export default function AssessmentPage() {
               <svg className="h-full w-full" viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200 dark:text-gray-700" strokeWidth="2"></circle>
                 <g className="origin-center -rotate-90 transform">
-                  <circle cx="18" cy="18" r="16" fill="none" className={`stroke-current ${passed ? 'text-green-500' : 'text-destructive'}`} strokeWidth="2" strokeDasharray="100" strokeDashoffset={100 - scorePercentage}></circle>
+                  <circle cx="18" cy="18" r="16" fill="none" className={`stroke-current ${passed ? 'text-primary' : 'text-destructive'}`} strokeWidth="2.5" strokeDasharray="100" strokeDashoffset={100 - scorePercentage}></circle>
                 </g>
               </svg>
               <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className={`text-4xl font-bold ${passed ? 'text-green-500' : 'text-destructive'}`}>
+                <span className={`text-4xl font-bold ${passed ? 'text-primary' : 'text-destructive'}`}>
                   {Math.round(scorePercentage)}%
                 </span>
                 <p className="text-sm text-muted-foreground">
@@ -317,74 +322,80 @@ export default function AssessmentPage() {
             </div>
 
             {passed ? (
-              <div className="text-center">
-                <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
-                <p className="text-lg">
+              <div className="text-center text-lg">
+                <p>
                   You are one step closer to your dream career in Germany!
                 </p>
               </div>
             ) : (
-              <div className="text-center">
-                <XCircle className="mx-auto mb-2 h-12 w-12 text-destructive" />
-                <p className="text-lg text-muted-foreground">
-                  Don't worry, many successful nurses start with extra preparation. You needed{' '}
-                  <span className="font-bold">{PASS_MARK}</span> marks to pass.
+              <div className="text-center text-lg">
+                <p className="text-muted-foreground">
+                  You needed{' '}
+                  <span className="font-bold text-foreground">{PASS_MARK}</span> marks to pass. Don't worry, many successful nurses start with extra preparation.
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {counselorData && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Next Steps</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>We recommend speaking with one of our counselors to discuss your results and plan your next steps.</p>
-              <div className="flex items-center gap-4 rounded-lg border p-4">
-                <Phone />
-                <div>
-                  <p className="font-semibold">Counselor Contact</p>
-                  <a href={`tel:${counselorData.counselorNumber}`} className="text-lg text-primary hover:underline">
-                    {counselorData.counselorNumber}
-                  </a>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {passed && counselorData && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Available Language Classes</CardTitle>
-              <CardDescription>
-                Here are the upcoming language classes you can join. Your counselor can help you enroll.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                {counselorData.languageClasses.map((cls) => (
-                  <li key={cls.day} className="flex justify-between rounded-md border p-3">
-                    <div>
-                      <p className="font-semibold">{cls.day}</p>
-                      <p className="text-sm text-muted-foreground">{cls.time}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">Level</p>
-                      <p className="text-sm text-muted-foreground">{cls.level}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <>
+            <Card className="bg-primary/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-headline text-primary">
+                  <Phone />
+                  Next Steps: Contact Your Counselor
+                </CardTitle>
+                <CardDescription>
+                  We recommend speaking with one of our counselors to discuss your results and enroll in language classes.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4 rounded-lg border bg-background p-4">
+                  <Phone className="text-primary"/>
+                  <div>
+                    <p className="font-semibold">Counselor Contact</p>
+                    <a href={`tel:${counselorData.counselorNumber}`} className="text-lg text-primary hover:underline">
+                      {counselorData.counselorNumber}
+                    </a>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-accent/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-headline text-accent-foreground">
+                  <BookOpen />
+                  Available Language Classes
+                </CardTitle>
+                <CardDescription>
+                  Here are the upcoming language classes you can join. Your counselor can help you enroll.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {counselorData.languageClasses.map((cls) => (
+                    <li key={cls.day} className="flex justify-between rounded-md border bg-background p-3">
+                      <div>
+                        <p className="font-semibold">{cls.day}</p>
+                        <p className="text-sm text-muted-foreground">{cls.time}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">Level</p>
+                        <p className="text-sm text-muted-foreground">{cls.level}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </>
         )}
         
-        <CardFooter className="justify-center gap-4">
-          {!passed && <Button onClick={resetTest}>Retake Test</Button>}
-          <Button onClick={() => router.push('/dashboard')} variant="outline">
+        <CardFooter className="justify-center gap-4 pt-4">
+          {!passed && <Button onClick={resetTest} size="lg">Retake Test</Button>}
+          <Button onClick={() => router.push('/dashboard')} variant="outline" size="lg">
             Back to Dashboard
           </Button>
         </CardFooter>
@@ -401,7 +412,7 @@ export default function AssessmentPage() {
         {questions
           .filter((q) => q.section === sectionName)
           .map((question, index) => (
-            <Card key={question.id} className="p-0">
+            <Card key={question.id} className="overflow-hidden border-l-4 border-primary/50 transition-all hover:border-primary">
               <CardHeader>
                 <CardTitle className="text-lg">
                   Question {index + 1 + (sectionName === 'Psychometric Analysis' ? 5 : 0)}
@@ -414,9 +425,9 @@ export default function AssessmentPage() {
                 <RadioGroup onValueChange={(value) => handleAnswerChange(question.id, parseFloat(value))}>
                   <div className="space-y-2">
                     {question.options.map((option) => (
-                      <Label key={option.text} className="flex items-center space-x-3 rounded-md border p-4 hover:bg-accent has-[[data-state=checked]]:border-primary">
+                      <Label key={option.text} className="flex cursor-pointer items-center space-x-3 rounded-md border p-4 transition-colors hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[[data-state=checked]]:text-primary">
                         <RadioGroupItem value={String(option.marks)} id={`${question.id}-${option.text}`} />
-                        <span>{option.text}</span>
+                        <span className="font-medium">{option.text}</span>
                       </Label>
                     ))}
                   </div>
@@ -430,20 +441,25 @@ export default function AssessmentPage() {
   
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <Card className="p-0">
+      <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-primary/5">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Career Readiness Assessment</CardTitle>
-          <CardDescription>
-            This mandatory test helps us understand your current skills and mindset. Please answer all questions honestly.
-            You must score at least 60% to pass.
-          </CardDescription>
+          <div className="flex items-center gap-4">
+            <Logo className="h-16 w-16 shrink-0" />
+            <div>
+              <CardTitle className="font-headline text-3xl">Career Readiness Assessment</CardTitle>
+              <CardDescription className="text-base">
+                This mandatory test helps us understand your current skills and mindset. Please answer all questions honestly.
+                You must score at least {PASS_PERCENTAGE}% to pass.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
       </Card>
       <form onSubmit={handleSubmit}>
         {renderSection('English Proficiency')}
         {renderSection('Psychometric Analysis')}
         <CardFooter className="mt-8 justify-center">
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" className="w-full max-w-xs">
             Submit Assessment
           </Button>
         </CardFooter>
