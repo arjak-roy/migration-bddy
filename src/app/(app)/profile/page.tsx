@@ -216,7 +216,7 @@ export default function ProfilePage() {
             <CardHeader className="bg-gradient-to-b from-primary/5">
               <div className="flex items-center gap-6">
                 <div
-                  className="group relative h-24 w-24"
+                  className="group relative h-32 w-32"
                   onClick={() => photoInputRef.current?.click()}
                 >
                   <input
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                     className="hidden"
                     accept="image/png, image/jpeg"
                   />
-                  <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded-full bg-muted">
+                  <div className="relative h-32 w-32 cursor-pointer overflow-hidden rounded-full bg-muted">
                     <Image
                       src={avatarDisplaySrc}
                       alt="User avatar"
@@ -239,7 +239,7 @@ export default function ProfilePage() {
                     className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
                     title="Upload new photo"
                   >
-                    <Upload className="h-8 w-8 text-white" />
+                    <Upload className="h-10 w-10 text-white" />
                   </div>
                 </div>
                 <div>
