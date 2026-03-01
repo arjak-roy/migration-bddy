@@ -30,7 +30,7 @@ import { Logo } from '@/components/logo';
 import { useProgress } from '@/context/ProgressContext';
 
 const navItems = [
-  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: Home },
+  { id: 'dashboard', href: '/dashboard', label: 'GTS Dashboard', icon: Home },
   { id: 'profile', href: '/profile', label: 'Profile', icon: User },
   { id: 'guide', href: '/guide', label: 'Career Guide', icon: NotebookText },
   { id: 'assessment', href: '/assessment', label: 'Assessment', icon: BarChart3 },
