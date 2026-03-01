@@ -48,11 +48,6 @@ const GermanReadinessAssessmentOutputSchema = z.object({
     .describe(
       'A list of the nurse\'s weaknesses identified during the assessment.'
     ),
-  recommendations: z
-    .array(z.string())
-    .describe(
-      'Specific, personalized recommendations for learning German, based on the assessment.'
-    ),
 });
 export type GermanReadinessAssessmentOutput = z.infer<
   typeof GermanReadinessAssessmentOutputSchema
@@ -78,7 +73,7 @@ Reason for Learning German: {{{reasonForLearningGerman}}}
 
 Carefully analyze the provided German sentence attempt for grammar, vocabulary, sentence structure, and overall comprehensibility. Also, consider their prior experience and motivation.
 
-Provide an aptitude score from 0 to 100, where 0 is no aptitude and 100 is exceptionally high aptitude. Generate a concise feedback summary, a list of specific strengths, a list of identified weaknesses, and actionable personalized recommendations for learning German.
+Provide an aptitude score from 0 to 100, where 0 is no aptitude and 100 is exceptionally high aptitude. Generate a concise feedback summary, a list of specific strengths, and a list of identified weaknesses.
 
 Ensure your feedback is encouraging, constructive, and tailored to their specific input.`,
 });

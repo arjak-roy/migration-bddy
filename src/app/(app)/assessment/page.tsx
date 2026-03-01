@@ -270,46 +270,29 @@ export default function AssessmentPage() {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Feedback</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-semibold">Strengths</h4>
-                  <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-                    {assessmentResult.strengths.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold">Areas for Improvement</h4>
-                   <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-                    {assessmentResult.weaknesses.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-               <CardHeader>
-                <CardTitle className="font-headline">Recommendations</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                    {assessmentResult.recommendations.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Check className="mt-1 h-4 w-4 flex-shrink-0 text-primary" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-              </CardContent>
-            </Card>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Feedback</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h4 className="font-semibold">Strengths</h4>
+                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                  {assessmentResult.strengths.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold">Areas for Improvement</h4>
+                 <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+                  {assessmentResult.weaknesses.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
 
           <div>
              <h2 className="mb-4 font-headline text-2xl font-bold">Personalized Learning Resources</h2>
