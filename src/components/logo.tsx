@@ -2,13 +2,13 @@
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const LOCAL_STORAGE_KEY = 'gts-uploaded-logo';
+const FILE_INPUT_ID = 'gts-logo-file-input';
 
 export function Logo({ className }: { className?: string }) {
   const [logoSrc, setLogoSrc] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -18,10 +18,6 @@ export function Logo({ className }: { className?: string }) {
       setLogoSrc(savedLogo);
     }
   }, []);
-
-  const handleLogoClick = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -36,10 +32,13 @@ export function Logo({ className }: { className?: string }) {
     } else if (file) {
         alert('Please select a valid image file.');
     }
+    // Reset file input value to allow re-uploading the same file
+    if (event.target) {
+        event.target.value = '';
+    }
   };
   
   // To avoid hydration mismatch, we can't render the interactive component on the server.
-  // We'll render a simple placeholder on the server and then the full component on the client.
   if (!isMounted) {
     return (
         <div
@@ -57,36 +56,31 @@ export function Logo({ className }: { className?: string }) {
     <>
       <input
         type="file"
-        ref={fileInputRef}
+        id={FILE_INPUT_ID}
         onChange={handleFileChange}
         className="hidden"
         accept="image/png, image/jpeg, image/gif, image/svg+xml"
       />
-      {logoSrc ? (
-        <div
-          className={cn('relative cursor-pointer', className)}
-          onClick={handleLogoClick}
-          title="Click to change logo"
-        >
-          <Image
-            src={logoSrc}
-            alt="Uploaded logo"
-            fill
-            className="object-contain"
-          />
-        </div>
-      ) : (
-        <div
-          className={cn(
-            'flex cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-current p-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground',
+      <label
+        htmlFor={FILE_INPUT_ID}
+        className={cn(
+            'cursor-pointer',
+             logoSrc ? 'relative' : 'flex items-center justify-center rounded-md border-2 border-dashed border-current p-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground',
             className
-          )}
-          onClick={handleLogoClick}
-          title="Click to upload logo"
-        >
-          Logo
-        </div>
-      )}
+        )}
+        title={logoSrc ? 'Click to change logo' : 'Click to upload logo'}
+      >
+        {logoSrc ? (
+            <Image
+                src={logoSrc}
+                alt="Uploaded logo"
+                fill
+                className="object-contain"
+            />
+        ) : (
+            'Logo'
+        )}
+      </label>
     </>
   );
 }
