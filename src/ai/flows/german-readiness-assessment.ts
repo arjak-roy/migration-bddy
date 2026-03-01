@@ -60,10 +60,10 @@ export async function germanReadinessAssessment(
 }
 
 const germanReadinessAssessmentPrompt = ai.definePrompt({
-  name: 'germanReadinessAssessmentPrompt',
+  name: 'germanReadinessAssessment',
   input: { schema: GermanReadinessAssessmentInputSchema },
   output: { schema: GermanReadinessAssessmentOutputSchema },
-  prompt: `You are an expert German language tutor and assessor, specializing in evaluating readiness for learning German, particularly for healthcare professionals.
+  prompt: `You are an expert German language tutor and assessor, specializing in evaluating readiness for learning German, particularly for healthcare professionals. Language learning requires dedication, self-study, and commitment.
 
 Your task is to assess a nurse's aptitude and current baseline for learning German based on the following information. Provide immediate, personalized feedback on their strengths and weaknesses.
 
