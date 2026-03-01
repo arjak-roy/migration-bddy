@@ -42,7 +42,12 @@ export default function DashboardPage() {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <div className="md:col-span-2">
-        <Card>
+        <Card className="overflow-hidden">
+          <div className="flex h-1.5 w-full">
+            <div className="w-1/3 bg-black" />
+            <div className="w-1/3 bg-red-600" />
+            <div className="w-1/3 bg-yellow-400" />
+          </div>
           <CardHeader>
             <CardTitle className="font-headline">Welcome back, Alex!</CardTitle>
             <CardDescription>
