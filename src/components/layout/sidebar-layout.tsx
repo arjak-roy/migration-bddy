@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   BarChart3,
+  BookCopy,
   Briefcase,
   Home,
   Lock,
@@ -34,6 +35,7 @@ const navItems = [
   { id: 'profile', href: '/profile', label: 'Profile', icon: User },
   { id: 'guide', href: '/guide', label: 'Career Guide', icon: NotebookText },
   { id: 'assessment', href: '/assessment', label: 'Assessment', icon: BarChart3 },
+  { id: 'language-resources', href: '/language-resources', label: 'Language Resources', icon: BookCopy },
   { id: 'jobs', href: '/jobs', label: 'Job Listings', icon: Briefcase },
 ];
 
@@ -59,7 +61,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <Logo className="h-9 w-20 bg-primary text-primary-foreground" />
+            <Logo className="h-9 w-20" />
           </div>
         </SidebarHeader>
         <SidebarContent>

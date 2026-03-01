@@ -16,6 +16,7 @@ import {
   NotebookText,
   Briefcase,
   Lock,
+  BookCopy,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useProgress, initialPathwaySteps } from '@/context/ProgressContext';
@@ -23,6 +24,7 @@ import { useProgress, initialPathwaySteps } from '@/context/ProgressContext';
 const quickLinks = [
   { id: 'assessment', name: 'Take Assessment', href: '/assessment', icon: BarChart3 },
   { id: 'guide', name: 'Read Career Guide', href: '/guide', icon: NotebookText },
+  { id: 'language-resources', name: 'View Language Resources', href: '/language-resources', icon: BookCopy },
   { id: 'jobs', name: 'Find Jobs', href: '/jobs', icon: Briefcase },
 ];
 

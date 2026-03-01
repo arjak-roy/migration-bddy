@@ -15,6 +15,7 @@ export const initialPathwaySteps: PathwayStep[] = [
   { id: 'profile', name: 'Complete Your Profile', href: '/profile', description: 'Fill in your professional details to get started.' },
   { id: 'guide', name: 'Explore Career Guide', href: '/guide', description: 'Learn about the process of becoming a nurse in Germany.' },
   { id: 'assessment', name: 'Take German Readiness Assessment', href: '/assessment', description: 'Assess your German language skills and get personalized feedback.' },
+  { id: 'language-resources', name: 'Access Language Resources', href: '/language-resources', description: 'Explore learning materials for different German proficiency levels.' },
   { id: 'jobs', name: 'Find Job Opportunities', href: '/jobs', description: 'Explore job listings and apply for positions.' },
 ];
 
