@@ -102,6 +102,9 @@ export default function ProfilePage() {
   const [isClient, setIsClient] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [agreementAccepted, setAgreementAccepted] = useState(false);
+  const [agreementText, setAgreementText] = useState(
+    'Loading agreement terms...'
+  );
 
   useEffect(() => {
     setIsClient(true);
@@ -109,6 +112,20 @@ export default function ProfilePage() {
     if (savedPhoto) {
       setPhotoSrc(savedPhoto);
     }
+
+    fetch('/agreement.md')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch agreement text.');
+        }
+        return res.text();
+      })
+      .then(setAgreementText)
+      .catch(() => {
+        setAgreementText(
+          'Failed to load agreement. Please check your connection and try again.'
+        );
+      });
   }, []);
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -578,44 +595,10 @@ export default function ProfilePage() {
                 <FormDescription>
                   Please read and accept the terms and conditions to continue.
                 </FormDescription>
-                <ScrollArea className="h-40 w-full rounded-md border p-4 text-sm text-muted-foreground">
-                  <strong>1. Introduction</strong>
-                  <br />
-                  Welcome to GTS Migration Buddy. By using our services, you
-                  agree to be bound by these terms and conditions. Please read
-                  them carefully.
-                  <br />
-                  <br />
-                  <strong>2. Services</strong>
-                  <br />
-                  Our platform provides guidance, assessment tools, and
-                  resources for nurses seeking to work in Germany. We do not
-                  guarantee job placement or visa approval, as these are
-                  subject to external authorities and employers.
-                  <br />
-                  <br />
-                  <strong>3. User Data</strong>
-                  <br />
-                  You agree to provide accurate and complete information in
-                  your profile. We are committed to protecting your privacy in
-                  accordance with our Privacy Policy. Your data will be used
-                  to personalize your experience and connect you with potential
-                  opportunities.
-                  <br />
-                  <br />
-                  <strong>4. User Responsibilities</strong>
-                  <br />
-                  You are responsible for maintaining the confidentiality of
-                  your account and for all activities that occur under your
-                  account. You agree to use the service for lawful purposes
-                  only.
-                  <br />
-                  <br />
-                  <strong>5. Acceptance</strong>
-                  <br />
-                  By clicking 'I Agree', you acknowledge that you have read,
-                  understood, and agree to be bound by these Terms and
-                  Conditions.
+                <ScrollArea className="h-40 w-full rounded-md border p-4">
+                  <pre className="whitespace-pre-wrap font-sans text-sm text-muted-foreground">
+                    {agreementText}
+                  </pre>
                 </ScrollArea>
                 <div className="flex items-center space-x-4">
                   <Button
