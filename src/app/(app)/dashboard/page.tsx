@@ -54,7 +54,7 @@ export default function DashboardPage() {
                       <Circle className="h-6 w-6 text-muted-foreground" />
                     )}
                     <div className="flex-1">
-                      <p className={`font-medium ${step.completed ? 'text-muted-foreground line-through' : ''}`}>
+                      <p className={`font-medium ${step.completed ? 'text-muted-foreground' : ''}`}>
                         {step.name}
                       </p>
                     </div>
