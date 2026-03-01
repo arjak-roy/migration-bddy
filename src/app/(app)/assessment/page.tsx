@@ -1,17 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  germanReadinessAssessment,
-  type GermanReadinessAssessmentOutput,
-} from '@/ai/flows/german-readiness-assessment';
-import {
-  personalizeLanguageRecommendations,
-  type PersonalizeLanguageRecommendationsOutput,
-} from '@/ai/flows/personalized-language-recommendations';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,364 +11,443 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ExternalLink, Loader2 } from 'lucide-react';
+import { CheckCircle, Phone, XCircle } from 'lucide-react';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
+import { Separator } from '@/components/ui/separator';
 
-const formSchema = z.object({
-  priorLanguageLearningExperience: z
-    .string()
-    .min(10, 'Please describe your experience in a bit more detail.'),
-  germanSentenceAttempt: z
-    .string()
-    .min(3, 'Please attempt a simple German sentence.'),
-  reasonForLearningGerman: z
-    .string()
-    .min(10, 'Please tell us why you want to learn German.'),
-  proficiencyLevel: z.string({
-    required_error: 'Please select your estimated proficiency level.',
-  }),
-});
+const questions = [
+  // English Questions (5 questions, 2 marks each)
+  {
+    id: 'eng1',
+    section: 'English Proficiency',
+    text: 'I am ___ nurse.',
+    options: [
+      { text: 'a', marks: 2 },
+      { text: 'an', marks: 0 },
+      { text: 'the', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng2',
+    section: 'English Proficiency',
+    text: 'She ___ in the hospital.',
+    options: [
+      { text: 'work', marks: 0 },
+      { text: 'works', marks: 2 },
+      { text: 'working', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng3',
+    section: 'English Proficiency',
+    text: "What is the opposite of 'healthy'?",
+    options: [
+      { text: 'Sick', marks: 2 },
+      { text: 'Strong', marks: 0 },
+      { text: 'Happy', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng4',
+    section: 'English Proficiency',
+    text: "Choose the correct past tense of 'give'.",
+    options: [
+      { text: 'Gived', marks: 0 },
+      { text: 'Gave', marks: 2 },
+      { text: 'Given', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng5',
+    section: 'English Proficiency',
+    text: 'Which of these is a medical instrument?',
+    options: [
+      { text: 'Hammer', marks: 0 },
+      { text: 'Stethoscope', marks: 2 },
+      { text: 'Wrench', marks: 0 },
+    ],
+  },
+  // Psychometric Questions (10 questions, 0-2 marks each)
+  {
+    id: 'psy1',
+    section: 'Psychometric Analysis',
+    text: 'I am self-motivated and can study independently.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy2',
+    section: 'Psychometric Analysis',
+    text: 'I am not afraid to make mistakes when learning a new language.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy3',
+    section: 'Psychometric Analysis',
+    text: 'I can consistently set aside time for studying every week.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy4',
+    section: 'Psychometric Analysis',
+    text: 'I see learning German as a crucial step for my career advancement.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy5',
+    section: 'Psychometric Analysis',
+    text: 'I enjoy challenging myself with difficult tasks.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy6',
+    section: 'Psychometric Analysis',
+    text: 'When I face a setback, I tend to give up easily.',
+    options: [ // Reverse scored
+      { text: 'Strongly Disagree', marks: 2 },
+      { text: 'Disagree', marks: 1.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 0.5 },
+      { text: 'Strongly Agree', marks: 0 },
+    ],
+  },
+  {
+    id: 'psy7',
+    section: 'Psychometric Analysis',
+    text: 'I am comfortable practicing speaking with native speakers.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy8',
+    section: 'Psychometric Analysis',
+    text: 'I actively look for opportunities to use the language I am learning.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy9',
+    section: 'Psychometric Analysis',
+    text: 'I believe a structured learning plan is important for success.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy10',
+    section: 'Psychometric Analysis',
+    text: 'I am patient and understand that language learning is a long-term process.',
+    options: [
+      { text: 'Strongly Disagree', marks: 0 },
+      { text: 'Disagree', marks: 0.5 },
+      { text: 'Neutral', marks: 1 },
+      { text: 'Agree', marks: 1.5 },
+      { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+];
 
-type AssessmentFormValues = z.infer<typeof formSchema>;
+const TOTAL_MARKS = 30;
+const PASS_PERCENTAGE = 60;
+const PASS_MARK = (TOTAL_MARKS * PASS_PERCENTAGE) / 100;
+
+interface CounselorData {
+  counselorNumber: string;
+  languageClasses: {
+    day: string;
+    time: string;
+    level: string;
+  }[];
+}
 
 export default function AssessmentPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [assessmentResult, setAssessmentResult] =
-    useState<GermanReadinessAssessmentOutput | null>(null);
-  const [recommendations, setRecommendations] =
-    useState<PersonalizeLanguageRecommendationsOutput | null>(null);
+  const [view, setView] = useState<'form' | 'results'>('form');
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [score, setScore] = useState(0);
+  const [counselorData, setCounselorData] = useState<CounselorData | null>(null);
   const { toast } = useToast();
   const { isStepUnlocked, completeStep } = useProgress();
   const router = useRouter();
 
-  const form = useForm<AssessmentFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      priorLanguageLearningExperience: '',
-      germanSentenceAttempt: '',
-      reasonForLearningGerman: '',
-    },
-  });
+  useEffect(() => {
+    fetch('/counselor-data.json')
+      .then((res) => res.json())
+      .then(setCounselorData)
+      .catch(() => {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not load counselor information.',
+        });
+      });
+  }, [toast]);
 
   if (!isStepUnlocked('assessment')) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">
-              Section Locked
-            </CardTitle>
+            <CardTitle className="font-headline text-2xl">Section Locked</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Please complete the previous steps in your pathway to unlock this
-              assessment.
+              Please complete the previous steps in your pathway to unlock this assessment.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button onClick={() => router.push('/dashboard')}>
-              Back to Dashboard
-            </Button>
+            <Button onClick={() => router.push('/dashboard')}>Back to Dashboard</Button>
           </CardFooter>
         </Card>
       </div>
     );
   }
 
-  async function onSubmit(values: AssessmentFormValues) {
-    setIsLoading(true);
-    setAssessmentResult(null);
-    setRecommendations(null);
+  const handleAnswerChange = (questionId: string, marks: number) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: marks }));
+  };
 
-    try {
-      const assessmentOutput = await germanReadinessAssessment(values);
-      setAssessmentResult(assessmentOutput);
-      completeStep('assessment');
-
-      if (assessmentOutput) {
-        const recommendationsOutput = await personalizeLanguageRecommendations({
-          proficiencyLevel: values.proficiencyLevel,
-          areasOfWeakness: assessmentOutput.weaknesses,
-          learningStyle: 'visual',
-          timeAvailability: '5-10 hours',
-        });
-        setRecommendations(recommendationsOutput);
-      }
-    } catch (error) {
-      console.error('Assessment failed:', error);
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (Object.keys(answers).length < questions.length) {
       toast({
         variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description:
-          'There was a problem with the assessment. Please try again.',
+        title: 'Incomplete Test',
+        description: 'Please answer all questions before submitting.',
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
-  }
 
-  return (
-    <div className="container mx-auto max-w-4xl space-y-8">
-      {!assessmentResult ? (
+    const totalScore = Object.values(answers).reduce((sum, marks) => sum + marks, 0);
+    setScore(totalScore);
+
+    if (totalScore >= PASS_MARK) {
+      completeStep('assessment');
+    }
+    setView('results');
+  };
+
+  const resetTest = () => {
+    setAnswers({});
+    setScore(0);
+    setView('form');
+  };
+
+  if (view === 'results') {
+    const passed = score >= PASS_MARK;
+    const scorePercentage = (score / TOTAL_MARKS) * 100;
+
+    return (
+      <div className="mx-auto max-w-3xl space-y-8">
         <Card>
-          <CardHeader>
-            <CardTitle className="font-headline text-2xl">
-              German Readiness Assessment
+          <CardHeader className="items-center text-center">
+            <CardTitle className="font-headline text-3xl">
+              {passed ? 'Congratulations! Assessment Passed!' : 'Assessment Complete'}
             </CardTitle>
             <CardDescription>
-              Answer a few questions to get AI-powered feedback on your German
-              learning aptitude and personalized recommendations.
+              {passed
+                ? "You've successfully passed the assessment."
+                : 'You did not meet the passing score this time.'}
             </CardDescription>
           </CardHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <CardContent className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="priorLanguageLearningExperience"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        What is your prior language learning experience?
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="e.g., 'I studied French in high school for 2 years...' or 'This is my first time learning a new language.'"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="germanSentenceAttempt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Attempt a simple sentence in German.
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="e.g., 'Ich bin Krankenschwester' or 'Ich möchte in Deutschland arbeiten.'"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="reasonForLearningGerman"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        What is your primary motivation for learning German?
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="e.g., 'To work as a registered nurse in Berlin and immerse myself in the culture.'"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="proficiencyLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        What is your estimated German proficiency level?
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a level (e.g., A1, B2)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="A1">A1 (Beginner)</SelectItem>
-                          <SelectItem value="A2">A2 (Elementary)</SelectItem>
-                          <SelectItem value="B1">B1 (Intermediate)</SelectItem>
-                          <SelectItem value="B2">
-                            B2 (Upper-Intermediate)
-                          </SelectItem>
-                          <SelectItem value="C1">C1 (Advanced)</SelectItem>
-                          <SelectItem value="C2">C2 (Proficient)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {isLoading ? 'Assessing...' : 'Get My Assessment'}
-                </Button>
-              </CardFooter>
-            </form>
-          </Form>
-        </Card>
-      ) : (
-        <div className="space-y-8">
-          <Card className="text-center">
-            <CardHeader>
-              <CardTitle className="font-headline text-3xl">
-                Your Assessment is Complete!
-              </CardTitle>
-              <CardDescription>
-                {assessmentResult.feedbackSummary}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center gap-4">
-              <div className="relative h-32 w-32">
-                <svg
-                  className="h-full w-full"
-                  width="36"
-                  height="36"
-                  viewBox="0 0 36 36"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="16"
-                    fill="none"
-                    className="stroke-current text-gray-200 dark:text-gray-700"
-                    strokeWidth="2"
-                  ></circle>
-                  <g className="origin-center -rotate-90 transform">
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="16"
-                      fill="none"
-                      className="stroke-current text-primary"
-                      strokeWidth="2"
-                      strokeDasharray="100"
-                      strokeDashoffset={
-                        100 - (assessmentResult.aptitudeScore || 0)
-                      }
-                    ></circle>
-                  </g>
-                </svg>
-                <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <span className="text-center text-3xl font-bold text-primary">
-                    {assessmentResult.aptitudeScore}
-                  </span>
-                </div>
+          <CardContent className="flex flex-col items-center gap-6">
+            <div className="relative h-40 w-40">
+              <svg className="h-full w-full" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200 dark:text-gray-700" strokeWidth="2"></circle>
+                <g className="origin-center -rotate-90 transform">
+                  <circle cx="18" cy="18" r="16" fill="none" className={`stroke-current ${passed ? 'text-green-500' : 'text-destructive'}`} strokeWidth="2" strokeDasharray="100" strokeDashoffset={100 - scorePercentage}></circle>
+                </g>
+              </svg>
+              <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <span className={`text-4xl font-bold ${passed ? 'text-green-500' : 'text-destructive'}`}>
+                  {Math.round(scorePercentage)}%
+                </span>
+                <p className="text-sm text-muted-foreground">
+                  {score.toFixed(1)} / {TOTAL_MARKS} Marks
+                </p>
               </div>
-              <p className="text-lg font-semibold">Aptitude Score</p>
-            </CardContent>
-          </Card>
+            </div>
 
+            {passed ? (
+              <div className="text-center">
+                <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
+                <p className="text-lg">
+                  You are one step closer to your dream career in Germany!
+                </p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <XCircle className="mx-auto mb-2 h-12 w-12 text-destructive" />
+                <p className="text-lg text-muted-foreground">
+                  Don't worry, many successful nurses start with extra preparation. You needed{' '}
+                  <span className="font-bold">{PASS_MARK}</span> marks to pass.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {counselorData && (
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline">Feedback</CardTitle>
+              <CardTitle className="font-headline">Next Steps</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-6 md:grid-cols-2">
-              <div>
-                <h4 className="font-semibold">Strengths</h4>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-                  {assessmentResult.strengths.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold">Areas for Improvement</h4>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-                  {assessmentResult.weaknesses.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
+            <CardContent className="space-y-4">
+              <p>We recommend speaking with one of our counselors to discuss your results and plan your next steps.</p>
+              <div className="flex items-center gap-4 rounded-lg border p-4">
+                <Phone />
+                <div>
+                  <p className="font-semibold">Counselor Contact</p>
+                  <a href={`tel:${counselorData.counselorNumber}`} className="text-lg text-primary hover:underline">
+                    {counselorData.counselorNumber}
+                  </a>
+                </div>
               </div>
             </CardContent>
           </Card>
+        )}
 
-          <div>
-            <h2 className="mb-4 font-headline text-2xl font-bold">
-              Personalized Learning Resources
-            </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {isLoading && !recommendations && (
-                <p>Generating recommendations...</p>
-              )}
-              {recommendations?.recommendations.map((rec, i) => (
-                <Card key={i} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{rec.name}</CardTitle>
-                    <CardDescription>{rec.category}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-sm text-muted-foreground">
-                      {rec.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {rec.focusAreas.map((area) => (
-                        <div
-                          key={area}
-                          className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
-                        >
-                          {area}
-                        </div>
-                      ))}
+        {passed && counselorData && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Available Language Classes</CardTitle>
+              <CardDescription>
+                Here are the upcoming language classes you can join. Your counselor can help you enroll.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3">
+                {counselorData.languageClasses.map((cls) => (
+                  <li key={cls.day} className="flex justify-between rounded-md border p-3">
+                    <div>
+                      <p className="font-semibold">{cls.day}</p>
+                      <p className="text-sm text-muted-foreground">{cls.time}</p>
                     </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild variant="outline" className="w-full">
-                      <a
-                        href={rec.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Visit Resource{' '}
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
+                    <div className="text-right">
+                      <p className="font-semibold">Level</p>
+                      <p className="text-sm text-muted-foreground">{cls.level}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+        
+        <CardFooter className="justify-center gap-4">
+          {!passed && <Button onClick={resetTest}>Retake Test</Button>}
+          <Button onClick={() => router.push('/dashboard')} variant="outline">
+            Back to Dashboard
+          </Button>
+        </CardFooter>
+      </div>
+    );
+  }
 
-          <div className="text-center">
-            <Button onClick={() => router.push('/dashboard')}>
-              Back to Dashboard
-            </Button>
-          </div>
-        </div>
-      )}
+  const renderSection = (sectionName: string) => (
+    <div key={sectionName}>
+       <h2 className="mb-6 mt-8 border-b pb-2 font-headline text-2xl font-semibold">
+          {sectionName}
+        </h2>
+      <div className="space-y-8">
+        {questions
+          .filter((q) => q.section === sectionName)
+          .map((question, index) => (
+            <Card key={question.id} className="p-0">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  Question {index + 1 + (sectionName === 'Psychometric Analysis' ? 5 : 0)}
+                </CardTitle>
+                <CardDescription className="pt-2 text-base text-foreground">
+                  {question.text}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup onValueChange={(value) => handleAnswerChange(question.id, parseFloat(value))}>
+                  <div className="space-y-2">
+                    {question.options.map((option) => (
+                      <Label key={option.text} className="flex items-center space-x-3 rounded-md border p-4 hover:bg-accent has-[[data-state=checked]]:border-primary">
+                        <RadioGroupItem value={String(option.marks)} id={`${question.id}-${option.text}`} />
+                        <span>{option.text}</span>
+                      </Label>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </CardContent>
+            </Card>
+          ))}
+      </div>
+    </div>
+  );
+  
+  return (
+    <div className="mx-auto max-w-4xl space-y-8">
+      <Card className="p-0">
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl">Career Readiness Assessment</CardTitle>
+          <CardDescription>
+            This mandatory test helps us understand your current skills and mindset. Please answer all questions honestly.
+            You must score at least 60% to pass.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      <form onSubmit={handleSubmit}>
+        {renderSection('English Proficiency')}
+        {renderSection('Psychometric Analysis')}
+        <CardFooter className="mt-8 justify-center">
+          <Button type="submit" size="lg">
+            Submit Assessment
+          </Button>
+        </CardFooter>
+      </form>
     </div>
   );
 }
