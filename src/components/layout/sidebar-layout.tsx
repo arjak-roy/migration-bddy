@@ -50,70 +50,68 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <div className="rounded-lg bg-primary p-1.5">
-                  <Logo />
-                </div>
-                <h2 className="text-xl font-semibold text-sidebar-foreground">
-                  GTS Buddy
-                </h2>
-              </Link>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith(item.href)}
-                    tooltip={item.label}
-                  >
-                    <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter>
-            <Link href="/profile" className="flex items-center gap-3 rounded-md p-2 hover:bg-sidebar-accent">
-              <Avatar>
-                <AvatarImage src="https://picsum.photos/seed/avatar/40/40" data-ai-hint="nurse portrait" />
-                <AvatarFallback>N</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col overflow-hidden text-sm">
-                <span className="truncate font-semibold text-sidebar-foreground">
-                  Nurse Alex
-                </span>
-                <span className="truncate text-sidebar-foreground/70">
-                  alex.doe@example.com
-                </span>
+      <Sidebar>
+        <SidebarHeader>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <div className="rounded-lg bg-primary p-1.5">
+                <Logo />
               </div>
+              <h2 className="text-xl font-semibold text-sidebar-foreground">
+                GTS Buddy
+              </h2>
             </Link>
-          </SidebarFooter>
-        </Sidebar>
-        <SidebarInset>
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="md:hidden" />
-              <h1 className="font-headline text-xl font-semibold">{getPageTitle()}</h1>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            {navItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith(item.href)}
+                  tooltip={item.label}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
+          <Link href="/profile" className="flex items-center gap-3 rounded-md p-2 hover:bg-sidebar-accent">
+            <Avatar>
+              <AvatarImage src="https://picsum.photos/seed/avatar/40/40" data-ai-hint="nurse portrait" />
+              <AvatarFallback>N</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden text-sm">
+              <span className="truncate font-semibold text-sidebar-foreground">
+                Nurse Alex
+              </span>
+              <span className="truncate text-sidebar-foreground/70">
+                alex.doe@example.com
+              </span>
             </div>
-            <Button variant="ghost" size="icon" aria-label="Log out">
-              <LogOut />
-            </Button>
-          </header>
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-            {children}
-          </main>
-        </SidebarInset>
-      </div>
+          </Link>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="md:hidden" />
+            <h1 className="font-headline text-xl font-semibold">{getPageTitle()}</h1>
+          </div>
+          <Button variant="ghost" size="icon" aria-label="Log out">
+            <LogOut />
+          </Button>
+        </header>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          {children}
+        </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
