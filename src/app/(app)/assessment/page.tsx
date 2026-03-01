@@ -287,10 +287,10 @@ export default function AssessmentPage() {
 
     return (
       <div className="mx-auto max-w-3xl space-y-8">
-        <Card className="border-2 border-primary">
+        <Card className={`border-2 ${passed ? 'border-green-500' : 'border-destructive'}`}>
           <CardHeader className="items-center text-center">
             {passed ? (
-              <Award className="h-16 w-16 text-primary" />
+              <Award className="h-16 w-16 text-green-500" />
             ) : (
               <XCircle className="mx-auto h-16 w-16 text-destructive" />
             )}
@@ -308,11 +308,11 @@ export default function AssessmentPage() {
               <svg className="h-full w-full" viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200 dark:text-gray-700" strokeWidth="2"></circle>
                 <g className="origin-center -rotate-90 transform">
-                  <circle cx="18" cy="18" r="16" fill="none" className={`stroke-current ${passed ? 'text-primary' : 'text-destructive'}`} strokeWidth="2.5" strokeDasharray="100" strokeDashoffset={100 - scorePercentage}></circle>
+                  <circle cx="18" cy="18" r="16" fill="none" className={`stroke-current ${passed ? 'text-green-500' : 'text-destructive'}`} strokeWidth="2.5" strokeDasharray="100" strokeDashoffset={100 - scorePercentage}></circle>
                 </g>
               </svg>
               <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className={`text-4xl font-bold ${passed ? 'text-primary' : 'text-destructive'}`}>
+                <span className={`text-4xl font-bold ${passed ? 'text-green-500' : 'text-destructive'}`}>
                   {Math.round(scorePercentage)}%
                 </span>
                 <p className="text-sm text-muted-foreground">
@@ -340,9 +340,9 @@ export default function AssessmentPage() {
 
         {passed && counselorData && (
           <>
-            <Card className="bg-primary/5">
+            <Card className="bg-green-50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-headline text-primary">
+                <CardTitle className="flex items-center gap-2 font-headline text-green-700">
                   <Phone />
                   Next Steps
                 </CardTitle>
@@ -352,10 +352,10 @@ export default function AssessmentPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4 rounded-lg border bg-background p-4">
-                  <Phone className="text-primary" />
+                  <Phone className="text-green-700" />
                   <div>
                     <p className="font-semibold">For any questions, you can reach us at:</p>
-                    <p className="text-lg text-primary">
+                    <p className="text-lg text-green-700">
                       {counselorData.counselorNumber}
                     </p>
                   </div>
