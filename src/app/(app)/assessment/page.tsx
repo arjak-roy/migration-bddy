@@ -344,20 +344,20 @@ export default function AssessmentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-headline text-primary">
                   <Phone />
-                  Next Steps: Contact Your Counselor
+                  Next Steps
                 </CardTitle>
                 <CardDescription>
-                  We recommend speaking with one of our counselors to discuss your results and enroll in language classes.
+                  A Global Migration Executive will contact you shortly to discuss your results and enroll you in the next batch.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4 rounded-lg border bg-background p-4">
-                  <Phone className="text-primary"/>
+                  <Phone className="text-primary" />
                   <div>
-                    <p className="font-semibold">Counselor Contact</p>
-                    <a href={`tel:${counselorData.counselorNumber}`} className="text-lg text-primary hover:underline">
+                    <p className="font-semibold">For any questions, you can reach us at:</p>
+                    <p className="text-lg text-primary">
                       {counselorData.counselorNumber}
-                    </a>
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -367,10 +367,10 @@ export default function AssessmentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-headline text-accent-foreground">
                   <BookOpen />
-                  Available Language Classes
+                  Next Batch Details
                 </CardTitle>
                 <CardDescription>
-                  Here are the upcoming language classes you can join. Your counselor can help you enroll.
+                  Here are the details for the upcoming language classes.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -391,6 +391,31 @@ export default function AssessmentPage() {
               </CardContent>
             </Card>
           </>
+        )}
+        
+        {!passed && counselorData && (
+          <Card className="bg-destructive/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-headline text-destructive">
+                <Phone />
+                Need Assistance?
+              </CardTitle>
+              <CardDescription>
+                Please contact a counselor to discuss your results and get guidance on how to improve.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4 rounded-lg border bg-background p-4">
+                <Phone className="text-destructive"/>
+                <div>
+                  <p className="font-semibold">Counselor Contact</p>
+                  <a href={`tel:${counselorData.counselorNumber}`} className="text-lg text-destructive hover:underline">
+                    {counselorData.counselorNumber}
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
         
         <CardFooter className="justify-center gap-4 pt-4">
