@@ -63,12 +63,13 @@ export default function GuidePage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Please complete your profile first to unlock this section.
+              Please complete the previous steps in your pathway to unlock this
+              section.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button onClick={() => router.push('/profile')}>
-              Go to Profile
+            <Button onClick={() => router.push('/dashboard')}>
+              Back to Dashboard
             </Button>
           </CardFooter>
         </Card>
