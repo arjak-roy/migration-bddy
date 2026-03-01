@@ -112,16 +112,23 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="md:hidden" />
-            <h1 className="font-headline text-xl font-semibold">
-              {getPageTitle()}
-            </h1>
+        <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur-sm">
+          <div className="flex h-1.5 w-full">
+            <div className="w-1/3 bg-black" />
+            <div className="w-1/3 bg-red-600" />
+            <div className="w-1/3 bg-yellow-400" />
           </div>
-          <Button variant="ghost" size="icon" aria-label="Log out">
-            <LogOut />
-          </Button>
+          <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="md:hidden" />
+              <h1 className="font-headline text-xl font-semibold">
+                {getPageTitle()}
+              </h1>
+            </div>
+            <Button variant="ghost" size="icon" aria-label="Log out">
+              <LogOut />
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           {children}
