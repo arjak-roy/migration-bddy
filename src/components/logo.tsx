@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
+import { Upload } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'gts-uploaded-logo';
 
@@ -38,8 +39,7 @@ export function Logo({ className }: { className?: string }) {
     }
   };
 
-  const handleLogoClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Prevent the parent Link from navigating
+  const handleUploadClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     fileInputRef.current?.click();
@@ -59,8 +59,37 @@ export function Logo({ className }: { className?: string }) {
     );
   }
 
+  if (!logoSrc) {
+    return (
+      <>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept="image/png, image/jpeg, image/gif, image/svg+xml"
+        />
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          className={cn(
+            'cursor-pointer flex items-center justify-center rounded-md border-2 border-dashed border-current p-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground',
+            className
+          )}
+          title="Click to upload logo"
+        >
+          Logo
+        </div>
+      </>
+    );
+  }
+
   return (
-    <>
+    <a
+      href="https://globaltalentsquare.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn('group relative', className)}
+    >
       <input
         type="file"
         ref={fileInputRef}
@@ -68,28 +97,19 @@ export function Logo({ className }: { className?: string }) {
         className="hidden"
         accept="image/png, image/jpeg, image/gif, image/svg+xml"
       />
+      <Image
+        src={logoSrc}
+        alt="Uploaded logo"
+        fill
+        className="object-contain"
+      />
       <div
-        onClick={handleLogoClick}
-        className={cn(
-          'cursor-pointer',
-          logoSrc
-            ? 'relative'
-            : 'flex items-center justify-center rounded-md border-2 border-dashed border-current p-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground',
-          className
-        )}
-        title={logoSrc ? 'Click to change logo' : 'Click to upload logo'}
+        onClick={handleUploadClick}
+        title="Change logo"
+        className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
       >
-        {logoSrc ? (
-          <Image
-            src={logoSrc}
-            alt="Uploaded logo"
-            fill
-            className="object-contain"
-          />
-        ) : (
-          'Logo'
-        )}
+        <Upload className="h-6 w-6 text-white" />
       </div>
-    </>
+    </a>
   );
 }
