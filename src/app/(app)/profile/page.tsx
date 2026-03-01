@@ -210,10 +210,10 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Card>
+      <Card className="border-primary/20">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardHeader>
+            <CardHeader className="bg-gradient-to-b from-primary/5">
               <div className="flex items-center gap-6">
                 <div
                   className="group relative h-24 w-24"
@@ -243,7 +243,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <CardTitle className="font-headline text-2xl">
+                  <CardTitle className="font-headline text-2xl text-primary">
                     Create your Profile
                   </CardTitle>
                   <CardDescription>
@@ -513,7 +513,7 @@ export default function ProfilePage() {
                 control={form.control}
                 name="careerGap"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border bg-primary/5 p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">
                         Did you have a career gap?
@@ -534,7 +534,7 @@ export default function ProfilePage() {
               />
 
               {watchCareerGap && (
-                <div className="space-y-4 rounded-lg border p-4">
+                <div className="space-y-4 rounded-md border-l-4 border-primary/50 bg-primary/5 p-4 pl-6">
                   <FormField
                     control={form.control}
                     name="careerGapYears"
@@ -573,7 +573,7 @@ export default function ProfilePage() {
                 </div>
               )}
 
-              <div className="space-y-6 rounded-lg border p-4">
+              <div className="space-y-6 rounded-lg border bg-primary/5 p-4">
                 <h3 className="text-lg font-medium">Document Uploads</h3>
                 <p className="text-sm text-muted-foreground">
                   Upload your CV, certificates, and other relevant documents. All uploads
@@ -688,12 +688,12 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="space-y-4 rounded-lg border p-4">
+              <div className="space-y-4 rounded-lg border bg-primary/5 p-4">
                 <h3 className="text-lg font-medium">User Agreement</h3>
                 <FormDescription>
                   Please read and accept the terms and conditions to continue.
                 </FormDescription>
-                <ScrollArea className="h-40 w-full rounded-md border p-4">
+                <ScrollArea className="h-40 w-full rounded-md border bg-card p-4">
                   <pre className="whitespace-pre-wrap font-sans text-sm text-muted-foreground">
                     {agreementText}
                   </pre>
@@ -734,7 +734,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="border-t pt-6">
               <Button type="submit" disabled={!agreementAccepted}>
                 Update Profile and Continue
               </Button>
