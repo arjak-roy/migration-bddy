@@ -267,7 +267,14 @@ export default function AssessmentPage() {
     }
 
     const totalScore = Object.values(answers).reduce((sum, marks) => sum + marks, 0);
+    const scorePercentage = (totalScore / TOTAL_MARKS) * 100;
     setScore(totalScore);
+
+    try {
+      localStorage.setItem('mmb-assessment-score', JSON.stringify({ score: totalScore, scorePercentage }));
+    } catch (error) {
+        console.error("Failed to save assessment score to localStorage", error);
+    }
 
     if (totalScore >= PASS_MARK) {
       completeStep('assessment');
@@ -340,9 +347,9 @@ export default function AssessmentPage() {
 
         {passed && counselorData && (
           <>
-            <Card className="bg-green-50">
+            <Card className="bg-green-50 dark:bg-green-900/20">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-headline text-green-700">
+                <CardTitle className="flex items-center gap-2 font-headline text-green-700 dark:text-green-400">
                   <Phone />
                   Next Steps
                 </CardTitle>
@@ -352,10 +359,10 @@ export default function AssessmentPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4 rounded-lg border bg-background p-4">
-                  <Phone className="text-green-700" />
+                  <Phone className="text-green-700 dark:text-green-400" />
                   <div>
                     <p className="font-semibold">For any questions, you can reach us at:</p>
-                    <p className="text-lg text-green-700">
+                    <p className="text-lg text-green-700 dark:text-green-400">
                       {counselorData.counselorNumber}
                     </p>
                   </div>

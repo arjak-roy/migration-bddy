@@ -11,6 +11,7 @@ import {
   LogOut,
   NotebookText,
   User,
+  Sparkles,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -36,6 +37,7 @@ const navItems = [
   { id: 'profile', href: '/profile', label: 'Profile', icon: User },
   { id: 'guide', href: '/guide', label: 'Career Guide', icon: NotebookText },
   { id: 'assessment', href: '/assessment', label: 'Assessment', icon: BarChart3 },
+  { id: 'prediction', href: '/prediction', label: 'Migration Prediction', icon: Sparkles },
   { id: 'language-resources', href: '/language-resources', label: 'Language Resources', icon: BookCopy },
   { id: 'jobs', href: '/jobs', label: 'Job Listings', icon: Briefcase },
 ];

@@ -15,6 +15,7 @@ export const initialPathwaySteps: PathwayStep[] = [
   { id: 'profile', name: 'Complete Your Profile', href: '/profile', description: 'Fill in your professional details to get started.' },
   { id: 'guide', name: 'Explore Career Guide', href: '/guide', description: 'Learn about the process of becoming a nurse in Germany.' },
   { id: 'assessment', name: 'Take German Readiness Assessment', href: '/assessment', description: 'Assess your German language skills and get personalized feedback.' },
+  { id: 'prediction', name: 'View Migration Prediction', href: '/prediction', description: 'Get an AI-powered prediction of your migration success.' },
   { id: 'language-resources', name: 'Access Language Resources', href: '/language-resources', description: 'Explore learning materials for different German proficiency levels.' },
   { id: 'jobs', name: 'Find Job Opportunities', href: '/jobs', description: 'Explore job listings and apply for positions.' },
 ];
@@ -77,9 +78,15 @@ export const ProgressProvider = ({ children }: { children: ReactNode }) => {
     // For any other step, we first find its position in the pathway.
     const stepIndex = initialPathwaySteps.findIndex(step => step.id === stepId);
 
-    // If it's not a valid step, or it's the first step (which is handled above), lock it.
+    // If it's not a valid step, lock it. This also handles the first step which should be 'profile' and is already unlocked.
     if (stepIndex < 1) {
         return false;
+    }
+
+    // A step is unlocked if all previous steps are completed.
+    // The prediction step requires both profile and assessment.
+    if (stepId === 'prediction') {
+      return isStepCompleted('profile') && isStepCompleted('assessment');
     }
     
     // A step is unlocked if the step immediately before it in the pathway is completed.

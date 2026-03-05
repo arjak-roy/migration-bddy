@@ -126,7 +126,7 @@ const ProfileDisplay = ({
             <p className="text-muted-foreground">{data.contactNumber}</p>
           )}
           <p className="text-muted-foreground">
-            Born on {format(data.dob, 'PPP')}
+            Born on {data.dob ? format(new Date(data.dob), 'PPP') : 'N/A'}
           </p>
         </div>
       </div>
@@ -337,7 +337,36 @@ export default function ProfilePage() {
   const watchCareerGap = form.watch('careerGap');
 
   function onSubmit(data: ProfileFormValues) {
-    console.log(data);
+    const { 
+        resume, 
+        languageCertificate, 
+        graduationCertificate, 
+        experienceCertificate, 
+        employerOfferLetter, 
+        ...rest
+    } = data;
+
+    const serializableData = {
+        ...rest,
+        dob: data.dob.toISOString(),
+        resume: !!resume,
+        languageCertificate: !!languageCertificate,
+        graduationCertificate: !!graduationCertificate,
+        experienceCertificate: !!experienceCertificate,
+        employerOfferLetter: !!employerOfferLetter
+    };
+
+    try {
+        localStorage.setItem('mmb-profile-data', JSON.stringify(serializableData));
+    } catch (error) {
+        console.error("Failed to save profile data to localStorage", error);
+        toast({
+          variant: "destructive",
+          title: "Could not save profile for prediction",
+          description: "There was an issue saving your profile data for the prediction feature.",
+        });
+    }
+
     toast({
       title: 'Profile Updated',
       description: 'Your information has been successfully saved.',
