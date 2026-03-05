@@ -10,7 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const MigrationPredictionInputSchema = z.object({
+const MigrationPredictionInputSchema = z.object({
   qualifications: z.string().describe("The nurse's professional qualifications."),
   skills: z.string().describe("A list of the nurse's technical and soft skills."),
   totalExperienceYears: z.number().describe('Total years of professional nursing experience.'),
@@ -28,7 +28,7 @@ export const MigrationPredictionInputSchema = z.object({
 });
 export type MigrationPredictionInput = z.infer<typeof MigrationPredictionInputSchema>;
 
-export const MigrationPredictionOutputSchema = z.object({
+const MigrationPredictionOutputSchema = z.object({
   predictionScore: z.number().min(0).max(100).describe('A prediction score from 0-100 indicating the likelihood of successful migration and integration.'),
   summary: z.string().describe('A concise, encouraging summary of the prediction and key factors.'),
   strengths: z.array(z.string()).describe('A list of the key strengths in the applicant\'s profile.'),
