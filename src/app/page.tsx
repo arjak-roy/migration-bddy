@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, BarChart3, Briefcase, HeartPulse, NotebookText } from 'lucide-react';
+import { ArrowRight, BarChart3, Briefcase, Sparkles, NotebookText } from 'lucide-react';
 import { Logo } from '@/components/logo';
 
 const features = [
@@ -10,25 +10,25 @@ const features = [
     icon: <BarChart3 className="h-8 w-8 text-primary" />,
     title: 'German Readiness Assessment',
     description: 'Our AI-powered assessment evaluates your aptitude for learning German and provides instant, personalized feedback to start you on the right foot.',
-    link: '/assessment',
+    link: '/dashboard',
   },
   {
     icon: <NotebookText className="h-8 w-8 text-primary" />,
     title: 'Germany Nurse Career Guide',
     description: 'Navigate the entire process with our comprehensive guide, covering everything from qualification recognition to visa procedures.',
-    link: '/guide',
+    link: '/dashboard',
   },
   {
-    icon: <HeartPulse className="h-8 w-8 text-primary" />,
-    title: 'Personalized Learning',
-    description: 'Receive a curated list of language resources tailored to your assessment results, learning style, and career goals.',
-    link: '/assessment',
+    icon: <Sparkles className="h-8 w-8 text-primary" />,
+    title: 'AI Migration Prediction',
+    description: 'Get an AI-powered analysis of your profile and assessment score to estimate your readiness and receive personalized recommendations.',
+    link: '/dashboard',
   },
   {
     icon: <Briefcase className="h-8 w-8 text-primary" />,
     title: 'Curated Job Listings',
     description: 'Explore relevant nursing job opportunities across Germany, with powerful filters to find your perfect match.',
-    link: '/jobs',
+    link: '/dashboard',
   },
 ];
 
@@ -101,7 +101,7 @@ export default function LandingPage() {
                   <CardContent className="flex flex-1 flex-col">
                     <p className="flex-1 text-muted-foreground">{feature.description}</p>
                     <Button variant="link" className="mt-4 p-0" asChild>
-                       <Link href="/dashboard">Learn more <ArrowRight className="ml-2" /></Link>
+                       <Link href={feature.link}>Learn more <ArrowRight className="ml-2" /></Link>
                     </Button>
                   </CardContent>
                 </Card>
