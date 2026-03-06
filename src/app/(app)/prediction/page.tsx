@@ -76,7 +76,7 @@ const PredictionScoreGauge = ({ score }: { score: number }) => {
 
 
 export default function PredictionPage() {
-  const { isStepUnlocked } = useProgress();
+  const { isStepUnlocked, completeStep } = useProgress();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -165,6 +165,12 @@ export default function PredictionPage() {
 
       const result = await migrationPrediction(input);
       setPrediction(result);
+      completeStep('prediction');
+      toast({
+        title: 'Step Complete!',
+        description:
+          'Your prediction is ready and the next step on your pathway is now unlocked.',
+      });
 
     } catch (error) {
       console.error("Prediction error:", error);
