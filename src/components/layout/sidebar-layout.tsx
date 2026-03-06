@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   BarChart3,
   BookCopy,
-  Briefcase,
+  Globe,
   Home,
   Lock,
   LogOut,
@@ -39,7 +39,7 @@ const navItems = [
   { id: 'assessment', href: '/assessment', label: 'Assessment', icon: BarChart3 },
   { id: 'prediction', href: '/prediction', label: 'Migration Prediction', icon: Sparkles },
   { id: 'language-resources', href: '/language-resources', label: 'Language Resources', icon: BookCopy },
-  { id: 'jobs', href: '/jobs', label: 'Job Listings', icon: Briefcase },
+  { id: 'jobs', href: '/jobs', label: 'Global Opportunities', icon: Globe },
 ];
 
 export function SidebarLayout({ children }: { children: React.ReactNode }) {

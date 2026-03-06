@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,116 +9,65 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ExternalLink, MapPin, Search } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
+import { ExternalLink, Globe } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
-const mockJobs = [
+const opportunities = [
   {
-    title: 'Registered Nurse (ICU)',
-    hospital: 'Charité - Universitätsmedizin Berlin',
-    location: 'Berlin',
-    specialty: 'ICU',
-    description:
-      'Seeking an experienced ICU nurse for our state-of-the-art intensive care unit. Requires B2 German.',
+    name: 'Germany',
+    flag: '🇩🇪',
+    description: 'High demand for nurses, excellent healthcare system, and strong social security. Proficiency in German (B1/B2 level) is a key requirement.',
+    link: 'https://www.make-it-in-germany.com/en/working-in-germany/professions-in-demand/nurses',
   },
   {
-    title: 'Pediatric Nurse',
-    hospital: 'Klinikum der Universität München',
-    location: 'Munich',
-    specialty: 'Pediatrics',
-    description:
-      'Join our dedicated pediatrics team. Experience with children is a must. Competitive salary and benefits.',
+    name: 'Canada',
+    flag: '🇨🇦',
+    description: 'A popular destination with a streamlined immigration process for healthcare professionals through programs like Express Entry.',
+    link: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html',
   },
   {
-    title: 'Surgical Nurse',
-    hospital: 'Universitätsklinikum Hamburg-Eppendorf',
-    location: 'Hamburg',
-    specialty: 'Surgery',
-    description:
-      'Full-time position in a fast-paced surgical ward. Opportunity for professional growth and training.',
+    name: 'Australia',
+    flag: '🇦🇺',
+    description: 'Offers a high quality of life and competitive salaries. Nurses are in high demand, but the skills assessment process is rigorous.',
+    link: 'https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list',
   },
   {
-    title: 'Geriatric Nurse',
-    hospital: 'Klinikum Köln',
-    location: 'Cologne',
-    specialty: 'Geriatrics',
-    description:
-      'Compassionate nurse needed for our geriatric care facility. Focus on patient-centered care.',
+    name: 'United Kingdom',
+    flag: '🇬🇧',
+    description: 'The NHS is a major employer of international nurses. A Health and Care Worker visa is the standard route.',
+    link: 'https://www.gov.uk/health-care-worker-visa',
   },
   {
-    title: 'Oncology Nurse',
-    hospital: 'Universitätsklinikum Frankfurt',
-    location: 'Frankfurt',
-    specialty: 'Oncology',
-    description:
-      'Work with a leading oncology team. Experience in cancer care and chemotherapy administration preferred.',
+    name: 'United States',
+    flag: '🇺🇸',
+    description: 'High salaries are a major draw, but the process involves passing the NCLEX exam and navigating a complex visa system.',
+    link: 'https://www.ncsbn.org/public-files/nclex_faqs.pdf',
+  },
+    {
+    name: 'New Zealand',
+    flag: '🇳🇿',
+    description: 'Known for its work-life balance. Nurses are on the "Green List" of in-demand roles, simplifying the residency pathway.',
+    link: 'https://www.immigration.govt.nz/new-zealand-visas/preparing-a-visa-application/working-in-nz/qualifications-for-work/green-list-occupations',
   },
   {
-    title: 'Operating Room Nurse',
-    hospital: 'Charité - Universitätsmedizin Berlin',
-    location: 'Berlin',
-    specialty: 'Surgery',
-    description:
-      'Assist in a wide range of surgical procedures in a modern OR environment.',
+    name: 'Ireland',
+    flag: '🇮🇪',
+    description: 'An English-speaking EU country with a strong demand for nurses in both public and private sectors.',
+    link: 'https://www.nmbi.ie/Registration/Trained-outside-Ireland',
   },
-  {
-    title: 'Emergency Room Nurse',
-    hospital: 'Klinikum der Universität München',
-    location: 'Munich',
-    specialty: 'ER',
-    description:
-      'High-energy individual for our busy emergency department. Triage and trauma care experience is a plus.',
+   {
+    name: 'Switzerland',
+    flag: '🇨🇭',
+    description: 'Offers some of the highest nursing salaries in the world, but has high living costs and requires proficiency in German, French, or Italian.',
+    link: 'https://www.redcross.ch/en/our-services/recognition-foreign-qualifications',
   },
-];
-
-const specialties = [
-  'All',
-  'ICU',
-  'Pediatrics',
-  'Surgery',
-  'Geriatrics',
-  'Oncology',
-  'ER',
-];
-const locations = [
-  'All',
-  'Berlin',
-  'Munich',
-  'Hamburg',
-  'Cologne',
-  'Frankfurt',
 ];
 
 export default function JobsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [specialty, setSpecialty] = useState('All');
-  const [location, setLocation] = useState('All');
-  const [filteredJobs, setFilteredJobs] = useState(mockJobs);
   const { isStepUnlocked } = useProgress();
   const router = useRouter();
-
-  useEffect(() => {
-    const lowercasedTerm = searchTerm.toLowerCase();
-    const results = mockJobs.filter((job) => {
-      const termMatch =
-        job.title.toLowerCase().includes(lowercasedTerm) ||
-        job.hospital.toLowerCase().includes(lowercasedTerm);
-      const specialtyMatch = specialty === 'All' || job.specialty === specialty;
-      const locationMatch = location === 'All' || job.location === location;
-      return termMatch && specialtyMatch && locationMatch;
-    });
-    setFilteredJobs(results);
-  }, [searchTerm, specialty, location]);
 
   if (!isStepUnlocked('jobs')) {
     return (
@@ -149,86 +97,39 @@ export default function JobsPage() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="font-headline text-3xl font-bold">Job Listings</h1>
+        <h1 className="font-headline text-3xl font-bold flex items-center justify-center gap-2">
+            <Globe /> Global Nursing Opportunities
+        </h1>
         <p className="mt-2 text-muted-foreground">
-          Explore curated nursing opportunities across Germany.
+          Explore popular countries for nurse migration and their requirements.
         </p>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="relative lg:col-span-2">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search by title or hospital..."
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Select value={specialty} onValueChange={setSpecialty}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by specialty" />
-              </SelectTrigger>
-              <SelectContent>
-                {specialties.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={location} onValueChange={setLocation}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((l) => (
-                  <SelectItem key={l} value={l}>
-                    {l}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
       <Separator />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job, index) => (
-            <Card key={index} className="flex flex-col">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {opportunities.map((country) => (
+            <Card key={country.name} className="flex flex-col">
               <CardHeader>
-                <CardTitle>{job.title}</CardTitle>
-                <CardDescription>{job.hospital}</CardDescription>
+                <CardTitle className="flex items-center gap-4">
+                    <span className="text-5xl">{country.flag}</span>
+                    <span className="text-2xl">{country.name}</span>
+                </CardTitle>
               </CardHeader>
-              <CardContent className="flex-grow space-y-4">
+              <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground">
-                  {job.description}
+                  {country.description}
                 </p>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <MapPin className="mr-2 h-4 w-4" />
-                  <span>{job.location}</span>
-                </div>
               </CardContent>
               <CardFooter>
                 <Button className="w-full" asChild>
-                  <a href="#" target="_blank" rel="noopener noreferrer">
-                    Apply Now <ExternalLink className="ml-2 h-4 w-4" />
+                  <a href={country.link} target="_blank" rel="noopener noreferrer">
+                    Learn More <ExternalLink className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
               </CardFooter>
             </Card>
-          ))
-        ) : (
-          <div className="col-span-full py-12 text-center">
-            <h3 className="text-xl font-semibold">No jobs found</h3>
-            <p className="text-muted-foreground">Try adjusting your filters.</p>
-          </div>
-        )}
+          ))}
       </div>
     </div>
   );

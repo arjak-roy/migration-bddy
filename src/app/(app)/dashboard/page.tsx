@@ -14,7 +14,7 @@ import {
   ArrowRight,
   BarChart3,
   NotebookText,
-  Briefcase,
+  Globe,
   Lock,
   BookCopy,
   Sparkles,
@@ -27,7 +27,7 @@ const quickLinks = [
   { id: 'prediction', name: 'Migration Prediction', href: '/prediction', icon: Sparkles },
   { id: 'guide', name: 'Read Career Guide', href: '/guide', icon: NotebookText },
   { id: 'language-resources', name: 'View Language Resources', href: '/language-resources', icon: BookCopy },
-  { id: 'jobs', name: 'Find Jobs', href: '/jobs', icon: Briefcase },
+  { id: 'jobs', name: 'Global Opportunities', href: '/jobs', icon: Globe },
 ];
 
 export default function DashboardPage() {
