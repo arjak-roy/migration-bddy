@@ -38,16 +38,86 @@ const MigrationPredictionOutputSchema = z.object({
 export type MigrationPredictionOutput = z.infer<typeof MigrationPredictionOutputSchema>;
 
 
+/**
+ * Simulates a logistic regression model by applying weights to various profile factors.
+ * This provides a more deterministic, rule-based score to guide the AI's prediction.
+ * @param input The candidate's profile data.
+ * @returns A score between 0 and 100.
+ */
+function calculateLogisticScore(input: MigrationPredictionInput): number {
+    const weights = {
+        base: 20,
+        experiencePerYear: 2,
+        assessmentPercentage: 0.3,
+        careerGapPenalty: -10,
+        careerGapYearPenalty: -2,
+        documentsUploaded: 3,
+        // Keyword scores for high-demand specializations
+        icuSkill: 10,
+        surgerySkill: 8,
+        pediatricsSkill: 5,
+        aclsCertification: 5,
+    };
+    const maxScore = 100;
+
+    let calculatedScore = weights.base;
+
+    // Experience: more is better
+    calculatedScore += input.totalExperienceYears * weights.experiencePerYear;
+
+    // Assessment Score: direct correlation
+    calculatedScore += input.assessmentScorePercentage * weights.assessmentPercentage;
+
+    // Career Gap: penalize for gaps
+    if (input.hasCareerGap) {
+        calculatedScore += weights.careerGapPenalty;
+        if (input.careerGapYears) {
+            calculatedScore += input.careerGapYears * weights.careerGapYearPenalty;
+        }
+    }
+
+    // Documents: more complete profile is better
+    const docCount = Object.values(input.documentsUploaded).filter(Boolean).length;
+    calculatedScore += docCount * weights.documentsUploaded;
+
+    // Keyword analysis for high-value skills and qualifications
+    const searchText = `${input.skills.toLowerCase()} ${input.qualifications.toLowerCase()}`;
+    if (searchText.includes('icu') || searchText.includes('intensive care')) {
+        calculatedScore += weights.icuSkill;
+    }
+    if (searchText.includes('surgery') || searchText.includes('operating room')) {
+        calculatedScore += weights.surgerySkill;
+    }
+    if (searchText.includes('pediatrics')) {
+        calculatedScore += weights.pediatricsSkill;
+    }
+    if (searchText.includes('acls') || searchText.includes('advanced cardiac life support')) {
+        calculatedScore += weights.aclsCertification;
+    }
+    
+    // Clamp the score between 0 and 100
+    const finalScore = Math.max(0, Math.min(maxScore, Math.round(calculatedScore)));
+
+    return finalScore;
+}
+
+
 export async function migrationPrediction(input: MigrationPredictionInput): Promise<MigrationPredictionOutput> {
   return migrationPredictionFlow(input);
 }
 
+const PromptInputSchema = MigrationPredictionInputSchema.extend({
+    logisticRegressionScore: z.number().describe('A pre-calculated prediction score based on a logistic regression model simulation. Use this as the primary factor for the final predictionScore.')
+});
 
 const prompt = ai.definePrompt({
   name: 'migrationPredictionPrompt',
-  input: { schema: MigrationPredictionInputSchema },
+  input: { schema: PromptInputSchema },
   output: { schema: MigrationPredictionOutputSchema },
   prompt: `You are an expert immigration consultant specializing in helping foreign nurses migrate to Germany. Your task is to analyze a candidate's profile and provide a migration prediction score.
+
+A logistic regression model simulation has pre-analyzed the candidate's data and generated a score: {{{logisticRegressionScore}}}/100.
+Use this score as the primary basis for your final 'predictionScore'. You can adjust it slightly (e.g., +/- 5 points) based on your holistic analysis of the text-based fields, but it should remain very close to the provided score. Your analysis in the summary, strengths, and improvements should justify why the score is what it is.
 
 Analyze the following candidate profile:
 - Qualifications: {{{qualifications}}}
@@ -63,7 +133,7 @@ Analyze the following candidate profile:
   - Experience Certificate: {{#if documentsUploaded.experienceCertificate}}Yes{{else}}No{{/if}}
   - Employer Offer Letter: {{#if documentsUploaded.employerOfferLetter}}Yes{{else}}No{{/if}}
 
-Based on this data, evaluate the candidate's chances of successfully navigating the German immigration process, getting their qualifications recognized, and finding a job.
+Based on all this data, especially the pre-calculated score, evaluate the candidate's chances of successfully navigating the German immigration process, getting their qualifications recognized, and finding a job.
 
 Provide a 'predictionScore' from 0 to 100. A score of 100 represents a perfect candidate with a very high chance of success.
 Consider factors like experience, specialized skills (ICU, surgery, etc.), language aptitude, and completeness of their profile (e.g., document uploads). A career gap might be a minor negative factor, depending on its length. High language aptitude is a significant positive factor. The presence of uploaded documents is a positive sign of a well-prepared candidate.
@@ -81,7 +151,13 @@ const migrationPredictionFlow = ai.defineFlow(
     outputSchema: MigrationPredictionOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
+    const logisticScore = calculateLogisticScore(input);
+
+    const { output } = await prompt({
+        ...input,
+        logisticRegressionScore: logisticScore
+    });
+
     if (!output) {
       throw new Error('Failed to get output from migration prediction prompt.');
     }
