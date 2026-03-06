@@ -16,13 +16,12 @@ import {
 } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Award, BookOpen, Phone, XCircle } from 'lucide-react';
+import { Award, BookOpen, Loader2, Phone, XCircle } from 'lucide-react';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
 
-const questions = [
-  // English Questions (5 questions, 2 marks each)
+const englishQuestionPool = [
   {
     id: 'eng1',
     section: 'English Proficiency',
@@ -73,7 +72,59 @@ const questions = [
       { text: 'Control', marks: 0 },
     ],
   },
-  // Psychometric Questions (10 questions, 0-2 marks each)
+  {
+    id: 'eng6',
+    section: 'English Proficiency',
+    text: 'A patient with a history of syncope should be monitored for signs of ______.',
+    options: [
+      { text: 'seizures', marks: 0 },
+      { text: 'fainting', marks: 2 },
+      { text: 'bleeding', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng7',
+    section: 'English Proficiency',
+    text: 'The doctor ordered a CBC. What does the \'C\' stand for in this context?',
+    options: [
+      { text: 'Cardiac', marks: 0 },
+      { text: 'Complete', marks: 2 },
+      { text: 'Cellular', marks: 0 },
+    ],
+  },
+  {
+    id: 'eng8',
+    section: 'English Proficiency',
+    text: '"Please administer the medication subcutaneously." This means the injection is given:',
+    options: [
+      { text: 'Into the muscle', marks: 0 },
+      { text: 'Into the vein', marks: 0 },
+      { text: 'Under the skin', marks: 2 },
+    ],
+  },
+  {
+    id: 'eng9',
+    section: 'English Proficiency',
+    text: 'Which is the correct medical term for a heart rate that is faster than normal?',
+    options: [
+      { text: 'Bradycardia', marks: 0 },
+      { text: 'Tachycardia', marks: 2 },
+      { text: 'Arrhythmia', marks: 0 },
+    ],
+  },
+    {
+    id: 'eng10',
+    section: 'English Proficiency',
+    text: 'The instruction "prn" on a medication order means the nurse should administer it:',
+    options: [
+      { text: 'Every morning', marks: 0 },
+      { text: 'Immediately', marks: 0 },
+      { text: 'As needed', marks: 2 },
+    ],
+  },
+];
+
+const psychometricQuestionPool = [
   {
     id: 'psy1',
     section: 'Psychometric Analysis',
@@ -194,7 +245,138 @@ const questions = [
       { text: 'Strongly Agree', marks: 2 },
     ],
   },
+  {
+    id: 'psy11',
+    section: 'Psychometric Analysis',
+    text: 'When a patient is uncooperative, I find it easy to remain patient and calm.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy12',
+    section: 'Psychometric Analysis',
+    text: 'I prefer a predictable daily routine over having to adapt to new situations frequently.',
+    options: [ // Reverse scored
+        { text: 'Strongly Disagree', marks: 2 },
+        { text: 'Disagree', marks: 1.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 0.5 },
+        { text: 'Strongly Agree', marks: 0 },
+    ],
+  },
+  {
+    id: 'psy13',
+    section: 'Psychometric Analysis',
+    text: 'Learning a new, complex clinical procedure is an exciting challenge for me.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy14',
+    section: 'Psychometric Analysis',
+    text: 'It is more important to follow hospital protocol exactly in all cases than to adapt care to a patient\'s unique emotional needs.',
+    options: [ // Reverse scored
+        { text: 'Strongly Disagree', marks: 2 },
+        { text: 'Disagree', marks: 1.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 0.5 },
+        { text: 'Strongly Agree', marks: 0 },
+    ],
+  },
+  {
+    id: 'psy15',
+    section: 'Psychometric Analysis',
+    text: 'I feel a strong sense of personal responsibility for my patients\' well-being and outcomes.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy16',
+    section: 'Psychometric Analysis',
+    text: 'After a long and emotionally draining shift, I am able to detach from work and relax at home.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy17',
+    section: 'Psychometric Analysis',
+    text: 'I am comfortable asking for help from senior colleagues when I am unsure about a patient\'s care plan.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy18',
+    section: 'Psychometric Analysis',
+    text: 'I often reflect on how I could have handled a past clinical situation more effectively.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy19',
+    section: 'Psychometric Analysis',
+    text: 'Moving to a new country where I don\'t know anyone seems like an exciting adventure rather than a daunting obstacle.',
+    options: [
+        { text: 'Strongly Disagree', marks: 0 },
+        { text: 'Disagree', marks: 0.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 1.5 },
+        { text: 'Strongly Agree', marks: 2 },
+    ],
+  },
+  {
+    id: 'psy20',
+    section: 'Psychometric Analysis',
+    text: 'I find it difficult to speak up if I disagree with a doctor\'s order, even if I believe it may be incorrect.',
+    options: [ // Reverse scored
+        { text: 'Strongly Disagree', marks: 2 },
+        { text: 'Disagree', marks: 1.5 },
+        { text: 'Neutral', marks: 1 },
+        { text: 'Agree', marks: 0.5 },
+        { text: 'Strongly Agree', marks: 0 },
+    ],
+  },
 ];
+
+
+const shuffleArray = <T,>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+};
+
 
 const TOTAL_MARKS = 30;
 const PASS_PERCENTAGE = 60;
@@ -210,6 +392,8 @@ interface CounselorData {
 }
 
 export default function AssessmentPage() {
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState<'form' | 'results'>('form');
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [score, setScore] = useState(0);
@@ -219,6 +403,11 @@ export default function AssessmentPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const selectedEnglish = shuffleArray(englishQuestionPool).slice(0, 5);
+    const selectedPsychometric = shuffleArray(psychometricQuestionPool).slice(0, 10);
+    setQuestions([...selectedEnglish, ...selectedPsychometric]);
+    setIsLoading(false);
+
     fetch('/counselor-data.json')
       .then((res) => res.json())
       .then(setCounselorData)
@@ -230,6 +419,25 @@ export default function AssessmentPage() {
         });
       });
   }, [toast]);
+  
+  if (isLoading) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="font-headline text-2xl">Loading Assessment</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center gap-4 py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">
+              Preparing your questions...
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
 
   if (!isStepUnlocked('assessment')) {
     return (
@@ -286,6 +494,12 @@ export default function AssessmentPage() {
     setAnswers({});
     setScore(0);
     setView('form');
+    // Reshuffle questions for the new attempt
+    setIsLoading(true);
+    const selectedEnglish = shuffleArray(englishQuestionPool).slice(0, 5);
+    const selectedPsychometric = shuffleArray(psychometricQuestionPool).slice(0, 10);
+    setQuestions([...selectedEnglish, ...selectedPsychometric]);
+    setIsLoading(false);
   };
 
   if (view === 'results') {
