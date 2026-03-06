@@ -651,28 +651,46 @@ export default function AssessmentPage() {
 
   const renderSection = (sectionName: string) => (
     <div key={sectionName}>
-       <h2 className="mb-6 mt-8 border-b pb-2 font-headline text-2xl font-semibold">
-          {sectionName}
-        </h2>
+      <h2 className="mb-6 mt-8 border-b pb-2 font-headline text-2xl font-semibold">
+        {sectionName}
+      </h2>
       <div className="space-y-8">
         {questions
           .filter((q) => q.section === sectionName)
           .map((question, index) => (
-            <Card key={question.id} className="overflow-hidden border-l-4 border-primary/50 transition-all hover:border-primary">
+            <Card
+              key={question.id}
+              className="overflow-hidden border-l-4 border-primary/50 transition-all hover:border-primary"
+            >
               <CardHeader>
                 <CardTitle className="text-lg">
-                  Question {index + 1 + (sectionName === 'Psychometric Analysis' ? 5 : 0)}
+                  Question{' '}
+                  {index + 1 + (sectionName === 'Psychometric Analysis' ? 5 : 0)}
                 </CardTitle>
                 <CardDescription className="pt-2 text-base text-foreground">
                   {question.text}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RadioGroup onValueChange={(value) => handleAnswerChange(question.id, parseFloat(value))}>
+                <RadioGroup
+                  onValueChange={(optionIndexStr) => {
+                    const optionIndex = parseInt(optionIndexStr, 10);
+                    const selectedOption = question.options[optionIndex];
+                    if (selectedOption) {
+                      handleAnswerChange(question.id, selectedOption.marks);
+                    }
+                  }}
+                >
                   <div className="space-y-2">
-                    {question.options.map((option) => (
-                      <Label key={option.text} className="flex cursor-pointer items-center space-x-3 rounded-md border p-4 transition-colors hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[[data-state=checked]]:text-primary">
-                        <RadioGroupItem value={String(option.marks)} id={`${question.id}-${option.text}`} />
+                    {question.options.map((option, optionIndex) => (
+                      <Label
+                        key={option.text}
+                        className="flex cursor-pointer items-center space-x-3 rounded-md border p-4 transition-colors hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[[data-state=checked]]:text-primary"
+                      >
+                        <RadioGroupItem
+                          value={String(optionIndex)}
+                          id={`${question.id}-${option.text}`}
+                        />
                         <span className="font-medium">{option.text}</span>
                       </Label>
                     ))}
