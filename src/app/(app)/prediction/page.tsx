@@ -188,10 +188,13 @@ export default function PredictionPage() {
           </CardDescription>
         </CardHeader>
         {!prediction && (
-          <CardFooter>
+          <CardFooter className="justify-center gap-4">
             <Button onClick={handleGeneratePrediction} disabled={isLoading || !isDataLoaded} size="lg">
               {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
               {isLoading ? 'Analyzing Profile...' : 'Generate My Prediction'}
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/dashboard')} size="lg">
+              Back to Dashboard
             </Button>
           </CardFooter>
         )}
@@ -206,10 +209,13 @@ export default function PredictionPage() {
             <PredictionScoreGauge score={prediction.predictionScore} />
             <p className="max-w-prose text-center text-muted-foreground">{prediction.summary}</p>
           </CardContent>
-          <CardFooter className="justify-center">
+          <CardFooter className="justify-center gap-4">
              <Button onClick={handleGeneratePrediction} disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
               {isLoading ? 'Re-analyzing...' : 'Regenerate Prediction'}
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/dashboard')}>
+              Back to Dashboard
             </Button>
           </CardFooter>
         </Card>
