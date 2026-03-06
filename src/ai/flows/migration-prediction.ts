@@ -39,67 +39,63 @@ export type MigrationPredictionOutput = z.infer<typeof MigrationPredictionOutput
 
 
 /**
- * Simulates a Random Forest model by averaging scores from multiple "decision trees"
- * or "expert evaluators" that focus on different aspects of the profile.
+ * Simulates an XGBoost model by sequentially applying weighted adjustments (boosts)
+ * based on different profile features.
  * @param input The candidate's profile data.
  * @returns A score between 0 and 100.
  */
-function calculateRandomForestScore(input: MigrationPredictionInput): number {
-    const maxScore = 100;
+function calculateXGBoostScore(input: MigrationPredictionInput): number {
+    let score = 30; // Start with a base prediction
 
-    // "Decision Tree" 1: Experience-focused Evaluator
-    let scoreTree1 = 20;
-    scoreTree1 += input.totalExperienceYears * 4; // Weight experience
+    // --- Booster 1: Core Experience ---
+    // This is a strong initial predictor.
+    let experienceBoost = 0;
+    experienceBoost += input.totalExperienceYears * 3; // 3 points per year
+    if (input.totalExperienceYears > 5) experienceBoost += 10; // Bonus for > 5 years
+    if (input.totalExperienceYears > 10) experienceBoost += 5; // Additional bonus for > 10 years
     if (input.hasCareerGap) {
-        scoreTree1 -= 15; // Penalty for having a gap
+        experienceBoost -= 15; // Initial penalty for a gap
         if (input.careerGapYears) {
-            scoreTree1 -= input.careerGapYears * 3; // Additional penalty per year
+            experienceBoost -= input.careerGapYears * 2; // Penalty per year of gap
         }
     }
-    if (input.totalExperienceYears > 5) scoreTree1 += 10; // Bonus for significant experience
-    if (input.totalExperienceYears > 10) scoreTree1 += 5;
+    score += experienceBoost;
 
+    // --- Booster 2: Language & Assessment ---
+    // This refines the prediction based on language aptitude, a critical factor.
+    let languageBoost = 0;
+    languageBoost += input.assessmentScorePercentage * 0.4; // 40% of the assessment score
+    score += languageBoost;
 
-    // "Decision Tree" 2: Skills & Qualifications-focused Evaluator
-    let scoreTree2 = 10;
-    const searchText = `${input.skills.toLowerCase()} ${input.qualifications.toLowerCase()}`;
-    let skillBonus = 0;
+    // --- Booster 3: Skills & Specialization ---
+    // This adds smaller boosts for high-demand specializations.
+    let skillBoost = 0;
+    const searchText = `${input.skills.toLowerCase()} ${input.qualifications.toLowerCase()} ${input.domainWorked.toLowerCase()}`;
     if (searchText.includes('icu') || searchText.includes('intensive care')) {
-        skillBonus += 25;
+        skillBoost += 15;
     }
     if (searchText.includes('surgery') || searchText.includes('operating room')) {
-        skillBonus += 20;
-    }
-    if (searchText.includes('pediatrics')) {
-        skillBonus += 15;
-    }
-    if (searchText.includes('acls') || searchText.includes('advanced cardiac life support')) {
-        skillBonus += 15;
+        skillBoost += 12;
     }
     if (searchText.includes('er') || searchText.includes('emergency')) {
-        skillBonus += 15;
+        skillBoost += 10;
     }
-    scoreTree2 += skillBonus;
+    if (searchText.includes('pediatrics')) {
+        skillBoost += 8;
+    }
     if (searchText.includes('b2') || searchText.includes('c1')) {
-        scoreTree2 += 10; // Bonus for mentioning high language proficiency
+        skillBoost += 10; // Bonus for mentioning high language proficiency
     }
+    score += skillBoost;
 
-    // "Decision Tree" 3: Preparedness-focused Evaluator
-    let scoreTree3 = 15;
-    scoreTree3 += input.assessmentScorePercentage * 0.5; // Strong weight on assessment score
+    // --- Booster 4: Preparedness & Documentation ---
+    // Final small adjustment for administrative readiness.
     const docCount = Object.values(input.documentsUploaded).filter(Boolean).length;
-    scoreTree3 += docCount * 5; // Good weight for each document uploaded
+    const preparednessBoost = docCount * 3; // 3 points per document
+    score += preparednessBoost;
 
-
-    // Normalize scores from each tree to be within the 0-100 range before averaging
-    const normalizedScore1 = Math.max(0, Math.min(maxScore, scoreTree1));
-    const normalizedScore2 = Math.max(0, Math.min(maxScore, scoreTree2));
-    const normalizedScore3 = Math.max(0, Math.min(maxScore, scoreTree3));
-
-    // Average the scores from the "trees" to get the final Random Forest score
-    const finalScore = (normalizedScore1 + normalizedScore2 + normalizedScore3) / 3;
-
-    return Math.round(finalScore);
+    // Normalize the final score to be within the 0-100 range.
+    return Math.max(0, Math.min(100, Math.round(score)));
 }
 
 
@@ -108,7 +104,7 @@ export async function migrationPrediction(input: MigrationPredictionInput): Prom
 }
 
 const PromptInputSchema = MigrationPredictionInputSchema.extend({
-    randomForestScore: z.number().describe('A pre-calculated prediction score based on a Random Forest model simulation. Use this as the primary factor for the final predictionScore.')
+    xgboostScore: z.number().describe('A pre-calculated prediction score based on an XGBoost model simulation. Use this as the primary factor for the final predictionScore.')
 });
 
 const prompt = ai.definePrompt({
@@ -117,8 +113,8 @@ const prompt = ai.definePrompt({
   output: { schema: MigrationPredictionOutputSchema },
   prompt: `You are an expert immigration consultant specializing in helping foreign nurses migrate to Germany. Your task is to analyze a candidate's profile and provide a migration prediction score.
 
-A Random Forest model simulation has pre-analyzed the candidate's data and generated a score: {{{randomForestScore}}}/100.
-This score was derived by averaging evaluations from multiple "expert" decision trees, each focusing on different aspects like experience, skills, and overall preparedness.
+An XGBoost (Extreme Gradient Boosting) model simulation has pre-analyzed the candidate's data and generated a score: {{{xgboostScore}}}/100.
+This score was derived by sequentially boosting the prediction based on factors like experience, language skills, and preparedness.
 Use this score as the primary basis for your final 'predictionScore'. You can adjust it slightly (e.g., +/- 5 points) based on your holistic analysis of the text-based fields, but it should remain very close to the provided score. Your analysis in the summary, strengths, and improvements should justify why the score is what it is.
 
 Analyze the following candidate profile:
@@ -153,11 +149,11 @@ const migrationPredictionFlow = ai.defineFlow(
     outputSchema: MigrationPredictionOutputSchema,
   },
   async (input) => {
-    const randomForestScore = calculateRandomForestScore(input);
+    const xgboostScore = calculateXGBoostScore(input);
 
     const { output } = await prompt({
         ...input,
-        randomForestScore: randomForestScore
+        xgboostScore: xgboostScore
     });
 
     if (!output) {
