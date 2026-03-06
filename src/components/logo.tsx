@@ -85,7 +85,7 @@ export function Logo({ className }: { className?: string }) {
 
   return (
     <a
-      href="https://globaltalentsquare.com/"
+      href="https://globaltalentsquare.com/for-talents"
       target="_blank"
       rel="noopener noreferrer"
       className={cn('group relative', className)}
