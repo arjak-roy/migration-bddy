@@ -26,58 +26,58 @@ const questions = [
   {
     id: 'eng1',
     section: 'English Proficiency',
-    text: 'I am ___ nurse.',
+    text: 'Which sentence is grammatically correct for a medical chart?',
     options: [
-      { text: 'a', marks: 2 },
-      { text: 'an', marks: 0 },
-      { text: 'the', marks: 0 },
+      { text: 'Patient reports pain in their leg.', marks: 2 },
+      { text: 'The patient, he said his leg hurts.', marks: 0 },
+      { text: 'There is pain being felt by the patient in the leg.', marks: 0 },
     ],
   },
   {
     id: 'eng2',
     section: 'English Proficiency',
-    text: 'She ___ in the hospital.',
+    text: 'The patient\'s condition has ______ deteriorated overnight.',
     options: [
-      { text: 'work', marks: 0 },
-      { text: 'works', marks: 2 },
-      { text: 'working', marks: 0 },
+      { text: 'significant', marks: 0 },
+      { text: 'significantly', marks: 2 },
+      { text: 'significance', marks: 0 },
     ],
   },
   {
     id: 'eng3',
     section: 'English Proficiency',
-    text: "What is the opposite of 'healthy'?",
+    text: 'What does the medical abbreviation "NPO" stand for?',
     options: [
-      { text: 'Sick', marks: 2 },
-      { text: 'Strong', marks: 0 },
-      { text: 'Happy', marks: 0 },
+      { text: 'Nothing by mouth', marks: 2 },
+      { text: 'New patient only', marks: 0 },
+      { text: 'No previous operation', marks: 0 },
     ],
   },
   {
     id: 'eng4',
     section: 'English Proficiency',
-    text: "Choose the correct past tense of 'give'.",
+    text: 'If a patient is "ambulatory," it means they are:',
     options: [
-      { text: 'Gived', marks: 0 },
-      { text: 'Gave', marks: 2 },
-      { text: 'Given', marks: 0 },
+      { text: 'In critical condition', marks: 0 },
+      { text: 'Able to walk', marks: 2 },
+      { text: 'Scheduled for surgery', marks: 0 },
     ],
   },
   {
     id: 'eng5',
     section: 'English Proficiency',
-    text: 'Which of these is a medical instrument?',
+    text: 'Choose the best word to complete the sentence: "The nurse must ______ the patient\'s vital signs every hour."',
     options: [
-      { text: 'Hammer', marks: 0 },
-      { text: 'Stethoscope', marks: 2 },
-      { text: 'Wrench', marks: 0 },
+      { text: 'Monitor', marks: 2 },
+      { text: 'View', marks: 0 },
+      { text: 'Control', marks: 0 },
     ],
   },
   // Psychometric Questions (10 questions, 0-2 marks each)
   {
     id: 'psy1',
     section: 'Psychometric Analysis',
-    text: 'I am self-motivated and can study independently.',
+    text: 'When I encounter a complex topic I don\'t understand, my first instinct is to find resources to teach myself.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -89,7 +89,7 @@ const questions = [
   {
     id: 'psy2',
     section: 'Psychometric Analysis',
-    text: 'I am not afraid to make mistakes when learning a new language.',
+    text: 'I view critical feedback not as a personal failure, but as a valuable tool for growth.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -101,7 +101,7 @@ const questions = [
   {
     id: 'psy3',
     section: 'Psychometric Analysis',
-    text: 'I can consistently set aside time for studying every week.',
+    text: 'Even during a very busy week, I can protect my scheduled study time from other commitments.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -113,7 +113,7 @@ const questions = [
   {
     id: 'psy4',
     section: 'Psychometric Analysis',
-    text: 'I see learning German as a crucial step for my career advancement.',
+    text: 'My motivation to learn German comes from a deep interest in the culture and communication, not just career requirements.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -125,7 +125,7 @@ const questions = [
   {
     id: 'psy5',
     section: 'Psychometric Analysis',
-    text: 'I enjoy challenging myself with difficult tasks.',
+    text: 'I am more energized by a problem that takes several attempts to solve than one I can solve immediately.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -137,7 +137,7 @@ const questions = [
   {
     id: 'psy6',
     section: 'Psychometric Analysis',
-    text: 'When I face a setback, I tend to give up easily.',
+    text: 'A significant professional setback would likely make me question my career path for an extended period.',
     options: [ // Reverse scored
       { text: 'Strongly Disagree', marks: 2 },
       { text: 'Disagree', marks: 1.5 },
@@ -149,7 +149,7 @@ const questions = [
   {
     id: 'psy7',
     section: 'Psychometric Analysis',
-    text: 'I am comfortable practicing speaking with native speakers.',
+    text: 'I would initiate a conversation in German with a stranger, even if I was unsure of my grammar.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -161,7 +161,7 @@ const questions = [
   {
     id: 'psy8',
     section: 'Psychometric Analysis',
-    text: 'I actively look for opportunities to use the language I am learning.',
+    text: 'When faced with a misunderstanding due to language barriers, I systematically try different ways to rephrase my message until I am understood.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -173,7 +173,7 @@ const questions = [
   {
     id: 'psy9',
     section: 'Psychometric Analysis',
-    text: 'I believe a structured learning plan is important for success.',
+    text: 'If my current study method isn\'t producing results, I am quick to research and adopt a new strategy.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
@@ -185,7 +185,7 @@ const questions = [
   {
     id: 'psy10',
     section: 'Psychometric Analysis',
-    text: 'I am patient and understand that language learning is a long-term process.',
+    text: 'I can maintain high motivation for a goal that is more than a year away, even with slow, incremental progress.',
     options: [
       { text: 'Strongly Disagree', marks: 0 },
       { text: 'Disagree', marks: 0.5 },
