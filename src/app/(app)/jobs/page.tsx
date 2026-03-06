@@ -17,51 +17,51 @@ import { Separator } from '@/components/ui/separator';
 const opportunities = [
   {
     name: 'Germany',
-    flag: '🇩🇪',
+    code: 'DE',
     description: 'High demand for nurses, excellent healthcare system, and strong social security. Proficiency in German (B1/B2 level) is a key requirement.',
     link: 'https://www.make-it-in-germany.com/en/working-in-germany/professions-in-demand/nurses',
   },
   {
     name: 'Canada',
-    flag: '🇨🇦',
+    code: 'CA',
     description: 'A popular destination with a streamlined immigration process for healthcare professionals through programs like Express Entry.',
     link: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html',
   },
   {
     name: 'Australia',
-    flag: '🇦🇺',
+    code: 'AU',
     description: 'Offers a high quality of life and competitive salaries. Nurses are in high demand, but the skills assessment process is rigorous.',
     link: 'https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list',
   },
   {
     name: 'United Kingdom',
-    flag: '🇬🇧',
+    code: 'GB',
     description: 'The NHS is a major employer of international nurses. A Health and Care Worker visa is the standard route.',
     link: 'https://www.gov.uk/health-care-worker-visa',
   },
   {
     name: 'United States',
-    flag: '🇺🇸',
-    description: 'High salaries are a major draw, but the process involves passing the NCLEX exam and navigating a complex visa system.',
-    link: 'https://www.ncsbn.org/public-files/nclex_faqs.pdf',
+    code: 'US',
+    description: 'High salaries are a major draw, but requires navigating a multi-step visa process (e.g., EB-3 visa) and passing the NCLEX exam.',
+    link: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers',
   },
     {
     name: 'New Zealand',
-    flag: '🇳🇿',
+    code: 'NZ',
     description: 'Known for its work-life balance. Nurses are on the "Green List" of in-demand roles, simplifying the residency pathway.',
     link: 'https://www.immigration.govt.nz/new-zealand-visas/preparing-a-visa-application/working-in-nz/qualifications-for-work/green-list-occupations',
   },
   {
     name: 'Ireland',
-    flag: '🇮🇪',
-    description: 'An English-speaking EU country with a strong demand for nurses in both public and private sectors.',
-    link: 'https://www.nmbi.ie/Registration/Trained-outside-Ireland',
+    code: 'IE',
+    description: 'An English-speaking EU country with a strong demand for nurses in both public and private sectors. Registration with the NMBI is required.',
+    link: 'https://www.irishimmigration.ie/coming-to-work-in-ireland/',
   },
    {
     name: 'Switzerland',
-    flag: '🇨🇭',
+    code: 'CH',
     description: 'Offers some of the highest nursing salaries in the world, but has high living costs and requires proficiency in German, French, or Italian.',
-    link: 'https://www.redcross.ch/en/our-services/recognition-foreign-qualifications',
+    link: 'https://www.sem.admin.ch/sem/en/home/themen/arbeit/nicht-eu_efta-angehoerige.html',
   },
 ];
 
@@ -111,9 +111,9 @@ export default function JobsPage() {
         {opportunities.map((country) => (
             <Card key={country.name} className="flex flex-col">
               <CardHeader>
-                <CardTitle className="flex items-center gap-4">
-                    <span className="text-5xl">{country.flag}</span>
-                    <span className="text-2xl">{country.name}</span>
+                <CardTitle className="flex items-baseline gap-3">
+                  <span className="text-3xl font-extrabold tracking-tight">{country.code}</span>
+                  <span className="text-2xl font-semibold">{country.name}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
