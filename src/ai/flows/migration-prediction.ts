@@ -39,66 +39,67 @@ export type MigrationPredictionOutput = z.infer<typeof MigrationPredictionOutput
 
 
 /**
- * Simulates a logistic regression model by applying weights to various profile factors.
- * This provides a more deterministic, rule-based score to guide the AI's prediction.
+ * Simulates a Random Forest model by averaging scores from multiple "decision trees"
+ * or "expert evaluators" that focus on different aspects of the profile.
  * @param input The candidate's profile data.
  * @returns A score between 0 and 100.
  */
-function calculateLogisticScore(input: MigrationPredictionInput): number {
-    const weights = {
-        base: 20,
-        experiencePerYear: 2,
-        assessmentPercentage: 0.3,
-        careerGapPenalty: -10,
-        careerGapYearPenalty: -2,
-        documentsUploaded: 3,
-        // Keyword scores for high-demand specializations
-        icuSkill: 10,
-        surgerySkill: 8,
-        pediatricsSkill: 5,
-        aclsCertification: 5,
-    };
+function calculateRandomForestScore(input: MigrationPredictionInput): number {
     const maxScore = 100;
 
-    let calculatedScore = weights.base;
-
-    // Experience: more is better
-    calculatedScore += input.totalExperienceYears * weights.experiencePerYear;
-
-    // Assessment Score: direct correlation
-    calculatedScore += input.assessmentScorePercentage * weights.assessmentPercentage;
-
-    // Career Gap: penalize for gaps
+    // "Decision Tree" 1: Experience-focused Evaluator
+    let scoreTree1 = 20;
+    scoreTree1 += input.totalExperienceYears * 4; // Weight experience
     if (input.hasCareerGap) {
-        calculatedScore += weights.careerGapPenalty;
+        scoreTree1 -= 15; // Penalty for having a gap
         if (input.careerGapYears) {
-            calculatedScore += input.careerGapYears * weights.careerGapYearPenalty;
+            scoreTree1 -= input.careerGapYears * 3; // Additional penalty per year
         }
     }
+    if (input.totalExperienceYears > 5) scoreTree1 += 10; // Bonus for significant experience
+    if (input.totalExperienceYears > 10) scoreTree1 += 5;
 
-    // Documents: more complete profile is better
-    const docCount = Object.values(input.documentsUploaded).filter(Boolean).length;
-    calculatedScore += docCount * weights.documentsUploaded;
 
-    // Keyword analysis for high-value skills and qualifications
+    // "Decision Tree" 2: Skills & Qualifications-focused Evaluator
+    let scoreTree2 = 10;
     const searchText = `${input.skills.toLowerCase()} ${input.qualifications.toLowerCase()}`;
+    let skillBonus = 0;
     if (searchText.includes('icu') || searchText.includes('intensive care')) {
-        calculatedScore += weights.icuSkill;
+        skillBonus += 25;
     }
     if (searchText.includes('surgery') || searchText.includes('operating room')) {
-        calculatedScore += weights.surgerySkill;
+        skillBonus += 20;
     }
     if (searchText.includes('pediatrics')) {
-        calculatedScore += weights.pediatricsSkill;
+        skillBonus += 15;
     }
     if (searchText.includes('acls') || searchText.includes('advanced cardiac life support')) {
-        calculatedScore += weights.aclsCertification;
+        skillBonus += 15;
     }
-    
-    // Clamp the score between 0 and 100
-    const finalScore = Math.max(0, Math.min(maxScore, Math.round(calculatedScore)));
+    if (searchText.includes('er') || searchText.includes('emergency')) {
+        skillBonus += 15;
+    }
+    scoreTree2 += skillBonus;
+    if (searchText.includes('b2') || searchText.includes('c1')) {
+        scoreTree2 += 10; // Bonus for mentioning high language proficiency
+    }
 
-    return finalScore;
+    // "Decision Tree" 3: Preparedness-focused Evaluator
+    let scoreTree3 = 15;
+    scoreTree3 += input.assessmentScorePercentage * 0.5; // Strong weight on assessment score
+    const docCount = Object.values(input.documentsUploaded).filter(Boolean).length;
+    scoreTree3 += docCount * 5; // Good weight for each document uploaded
+
+
+    // Normalize scores from each tree to be within the 0-100 range before averaging
+    const normalizedScore1 = Math.max(0, Math.min(maxScore, scoreTree1));
+    const normalizedScore2 = Math.max(0, Math.min(maxScore, scoreTree2));
+    const normalizedScore3 = Math.max(0, Math.min(maxScore, scoreTree3));
+
+    // Average the scores from the "trees" to get the final Random Forest score
+    const finalScore = (normalizedScore1 + normalizedScore2 + normalizedScore3) / 3;
+
+    return Math.round(finalScore);
 }
 
 
@@ -107,7 +108,7 @@ export async function migrationPrediction(input: MigrationPredictionInput): Prom
 }
 
 const PromptInputSchema = MigrationPredictionInputSchema.extend({
-    logisticRegressionScore: z.number().describe('A pre-calculated prediction score based on a logistic regression model simulation. Use this as the primary factor for the final predictionScore.')
+    randomForestScore: z.number().describe('A pre-calculated prediction score based on a Random Forest model simulation. Use this as the primary factor for the final predictionScore.')
 });
 
 const prompt = ai.definePrompt({
@@ -116,7 +117,8 @@ const prompt = ai.definePrompt({
   output: { schema: MigrationPredictionOutputSchema },
   prompt: `You are an expert immigration consultant specializing in helping foreign nurses migrate to Germany. Your task is to analyze a candidate's profile and provide a migration prediction score.
 
-A logistic regression model simulation has pre-analyzed the candidate's data and generated a score: {{{logisticRegressionScore}}}/100.
+A Random Forest model simulation has pre-analyzed the candidate's data and generated a score: {{{randomForestScore}}}/100.
+This score was derived by averaging evaluations from multiple "expert" decision trees, each focusing on different aspects like experience, skills, and overall preparedness.
 Use this score as the primary basis for your final 'predictionScore'. You can adjust it slightly (e.g., +/- 5 points) based on your holistic analysis of the text-based fields, but it should remain very close to the provided score. Your analysis in the summary, strengths, and improvements should justify why the score is what it is.
 
 Analyze the following candidate profile:
@@ -151,11 +153,11 @@ const migrationPredictionFlow = ai.defineFlow(
     outputSchema: MigrationPredictionOutputSchema,
   },
   async (input) => {
-    const logisticScore = calculateLogisticScore(input);
+    const randomForestScore = calculateRandomForestScore(input);
 
     const { output } = await prompt({
         ...input,
-        logisticRegressionScore: logisticScore
+        randomForestScore: randomForestScore
     });
 
     if (!output) {
