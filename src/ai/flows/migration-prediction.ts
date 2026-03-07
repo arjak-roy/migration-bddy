@@ -45,7 +45,7 @@ export type MigrationPredictionOutput = z.infer<typeof MigrationPredictionOutput
  * @returns A score between 0 and 100.
  */
 function calculateXGBoostScore(input: MigrationPredictionInput): number {
-    let score = 30; // Start with a base prediction
+    let score = 50; // Start with a base prediction
 
     // --- Booster 1: Core Experience ---
     // This is a strong initial predictor.
